@@ -2,7 +2,7 @@ name = "hash"
 version = "0.1.0"
 description = "Proved hash functions in Lean 4: SHA-256 and SHA-224 from FIPS 180-4 and SHA3-512 from FIPS 202, each with a bit-level transcription of its standard, a native ByteArray implementation, and the machine-checked refinement between them"
 keywords = ["sha-256", "sha-224", "sha3-512", "keccak", "fips-180-4", "fips-202", "verified", "lean4"]
-license = "Apache-2.0"
+license = "MIT"
 readmeFile = "README.md"
 defaultTargets = ["Hash", "HashVerified", "HashTest", "HashGates",
                   "hash_sha256", "hash_sha3_512sum", "hash_selftest",
