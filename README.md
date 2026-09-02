@@ -34,7 +34,15 @@ import Hash
 
 #eval (Hash.sha256 "abc".toUTF8).toHex
 #eval (Hash.sha3_512 "abc".toUTF8).toHex
+
+-- or indexed by algorithm
+#eval Hash.digestHex .sha3_512 "abc".toUTF8
 ```
+
+`Hash.sha256`, `Hash.sha224` and `Hash.sha3_512` return their own family's
+`Digest`, whose type carries the width. `Hash.digestBytes` and
+`Hash.digestHex` take a `Hash.Algorithm` and are uniform in it;
+`Hash.size_digestBytes` proves the result is as wide as the tag says.
 
 The public root excludes the known-answer evidence and the axiom audits, so a
 consumer never elaborates them; `Hash.Verified` includes them.
@@ -83,6 +91,7 @@ lake --wfail build HashVerified
 lake env leanchecker --fresh Hash.Verified
 lake exe sha256 --self-test
 lake exe sha3_512sum --self-test
+lake exe selftest
 lake exe vendorseal
 lake exe citations
 lake exe trustselftest

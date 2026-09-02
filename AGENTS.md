@@ -87,6 +87,7 @@ orchestrate; they decide nothing.
 | `lake env leanchecker --fresh Hash.Verified` | an independent kernel replays the verified closure |
 | `lake exe sha256 --self-test` | the proved SHA-256 and SHA-224 reproduce every record of both pinned CAVP files |
 | `lake exe sha3_512sum --self-test` | the proved SHA3-512 reproduces every record of the pinned CAVP file |
+| `lake exe selftest` | every sealed CAVP response file is replayed through `Hash.digestHex`, and none is left unclaimed by any algorithm |
 | `lake exe vendorseal` | `vendor/` and `generated/vendor-manifest.tsv` agree in both directions; every path is valid on Windows |
 | `lake exe citations` | no line-numbered citation into a protected authored document |
 | `lake exe trustselftest` | the declared red set is exact; planted violations are rejected for their stated reasons |

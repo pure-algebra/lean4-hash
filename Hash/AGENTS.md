@@ -10,7 +10,7 @@ shared surface at the top:
 
 ```text
 Hash.lean                 the public root; a consumer imports this and nothing else
-Hash/Algorithm.lean       the algorithm-indexed surface over both families
+Hash/Algorithm.lean       the tag, the three aliases, and the indexed dispatch
 Hash/Verified.lean        the audited root; imports both families' verified roots
 Hash/Sha256/…             FIPS 180-4: Spec, Impl, Lengths, Bridge, Fast, Hex, Digest, Api, Vec, Context, Sha224
 Hash/Sha3/…               FIPS 202:   Spec, Impl, Lengths, Structural, Roundtrips, Theorems, Bridge, BridgeEvidence, Fast, Hex, Digest, Api

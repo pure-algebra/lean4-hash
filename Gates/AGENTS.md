@@ -51,6 +51,7 @@ they decide nothing.
 | `lake exe sha256 <file>…` | nothing; prints the SHA-256 of each file | nothing |
 | `lake exe sha3_512sum --self-test` | the proved SHA3-512 against every record of the pinned NIST CAVP short-message file | nothing |
 | `lake exe sha3_512sum [FILE\|-]` | nothing; prints the SHA3-512 of a file or of standard input | nothing |
+| `lake exe selftest` | every `.rsp` found under `vendor/`, replayed through `Hash.digestHex`; a response file no algorithm claims fails | nothing |
 | `lake exe vendorseal` | `vendor/` against `generated/vendor-manifest.tsv` in both directions; Windows path validity | nothing |
 | `lake exe vendorseal --write` | Windows path validity | `generated/vendor-manifest.tsv` |
 | `lake exe citations` | no line-numbered citation into a protected authored document | nothing |

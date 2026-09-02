@@ -2,6 +2,7 @@ import Gates.Common
 import Gates.Cavp
 import Gates.Sha256
 import Gates.Sha3
+import Gates.SelfTest
 import Gates.VendorSeal
 import Gates.Citations
 import Gates.TrustSelfTest

@@ -23,6 +23,8 @@ jobs:
         run: lake exe sha256 --self-test
       - name: SHA3-512 self-test against the pinned CAVP vectors
         run: lake exe sha3_512sum --self-test
+      - name: Combined self-test over every sealed CAVP response file
+        run: lake exe selftest
       - name: Vendor seal in both directions
         run: lake exe vendorseal
       - name: Internal-citation gate

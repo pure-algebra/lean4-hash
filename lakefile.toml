@@ -5,7 +5,7 @@ keywords = ["sha-256", "sha-224", "sha3-512", "keccak", "fips-180-4", "fips-202"
 license = "Apache-2.0"
 readmeFile = "README.md"
 defaultTargets = ["Hash", "HashVerified", "HashTest", "Gates",
-                  "sha256", "sha3_512sum", "vendorseal",
+                  "sha256", "sha3_512sum", "selftest", "vendorseal",
                   "citations", "trustselftest"]
 # `lake test` builds the audited root: the `#guard_msgs` pins on the two
 # per-family axiom audit lines are the test.
@@ -57,6 +57,10 @@ root = "bin.Sha256"
 [[lean_exe]]
 name = "sha3_512sum"
 root = "bin.Sha3Sum"
+
+[[lean_exe]]
+name = "selftest"
+root = "bin.SelfTest"
 
 [[lean_exe]]
 name = "vendorseal"

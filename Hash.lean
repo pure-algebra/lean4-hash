@@ -1,5 +1,6 @@
 import Hash.Sha256
 import Hash.Sha3
+import Hash.Algorithm
 
 /-!
 # `Hash` — proved hash functions in Lean 4
