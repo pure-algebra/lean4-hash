@@ -1,19 +1,19 @@
 import Lean
 import Lean.Util.CollectAxioms
 import Hash
-import Gates
+import HashGates
 
 /-!
 # `Hash` axiom allowlist gate
 
 This command tokenizes every authored source under `Hash/`, `HashTest/`, and
-`Gates/` and inspects every declaration compiled from them, including
+`HashGates/` and inspects every declaration compiled from them, including
 definitions, instances, generated declarations, and private helpers. The
 build fails on an authored `unsafe` or `partial` declaration modifier, on any
 declaration that reaches a forbidden axiom, and on any declaration that
 reaches an axiom outside the ceiling.
 
-**One ceiling** binds every tree here, `Hash/`, `HashTest/` and `Gates/`
+**One ceiling** binds every tree here, `Hash/`, `HashTest/` and `HashGates/`
 alike, under operator ruling R-11 (2026-09-02): `propext`, `Quot.sound`, and
 `Classical.choice`. `Classical.choice` needs no admission and no exemption,
 so this gate carries no exact-module or exact-declaration admission list and
@@ -44,11 +44,11 @@ namespace HashTest.Audit
 private def allowedAxioms : List Name :=
   [``propext, ``Quot.sound, ``Classical.choice]
 
-/-- The `Gates/` tree is tooling: it is audited for totality and forbidden
+/-- The `HashGates/` tree is tooling: it is audited for totality and forbidden
 axioms exactly as the library is. It contains no semantic declaration;
-`Gates/AGENTS.md` owns that rule. The prefix survives R-11 only so the gate
+`HashGates/AGENTS.md` owns that rule. The prefix survives R-11 only so the gate
 can report how much of what it checked was tooling. -/
-private def toolingTreePrefix : Name := `Gates
+private def toolingTreePrefix : Name := `HashGates
 
 private def forbiddenAxioms : List Name :=
   [``sorryAx, ``Lean.ofReduceBool, ``Lean.ofReduceNat, ``Lean.trustCompiler]
@@ -170,10 +170,10 @@ private def leanFilesBelow (directory : System.FilePath) : IO (Array System.File
 private def auditedSources (projectRoot : System.FilePath) : IO (Array System.FilePath) := do
   let library ← leanFilesBelow (projectRoot / "Hash")
   let tests ← leanFilesBelow (projectRoot / "HashTest")
-  let tooling ← leanFilesBelow (projectRoot / "Gates")
+  let tooling ← leanFilesBelow (projectRoot / "HashGates")
   return library ++ tests ++ tooling
     |>.push (projectRoot / "Hash.lean")
-    |>.push (projectRoot / "Gates.lean")
+    |>.push (projectRoot / "HashGates.lean")
     |>.push (projectRoot / "HashTest.lean")
 
 open Lean Elab Command in
@@ -224,6 +224,6 @@ elab "#hash_axiom_gate" : command => do
           "Hash axiom gate: declaration {declaration} reaches unexpected axiom {axiomName}; allowed axioms are {allowedAxioms}"
 
   logInfo
-    m!"Hash module and axiom gate: checked {sources.size} modules and {declarations.size} declarations ({toolingCount} in the Gates tooling tree); ceiling is {allowedAxioms} for every tree; {choiceCount} declaration(s) reach Classical.choice; 0 offenders"
+    m!"Hash module and axiom gate: checked {sources.size} modules and {declarations.size} declarations ({toolingCount} in the HashGates tooling tree); ceiling is {allowedAxioms} for every tree; {choiceCount} declaration(s) reach Classical.choice; 0 offenders"
 
 end HashTest.Audit

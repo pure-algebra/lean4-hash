@@ -20,14 +20,14 @@ jobs:
       - name: Recheck the audit root with an independent kernel
         run: lake env leanchecker --fresh Hash.Verified
       - name: SHA-256 and SHA-224 self-test against the pinned CAVP vectors
-        run: lake exe sha256 --self-test
+        run: lake exe hash_sha256 --self-test
       - name: SHA3-512 self-test against the pinned CAVP vectors
-        run: lake exe sha3_512sum --self-test
+        run: lake exe hash_sha3_512sum --self-test
       - name: Combined self-test over every sealed CAVP response file
-        run: lake exe selftest
+        run: lake exe hash_selftest
       - name: Vendor seal in both directions
-        run: lake exe vendorseal
+        run: lake exe hash_vendorseal
       - name: Internal-citation gate
-        run: lake exe citations
+        run: lake exe hash_citations
       - name: Trust self-test with planted violations
-        run: lake exe trustselftest
+        run: lake exe hash_trustselftest

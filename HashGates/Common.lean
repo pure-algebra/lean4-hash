@@ -1,5 +1,5 @@
 /-!
-# Gates.Common
+# HashGates.Common
 
 Shared helpers for the Lean-implemented repository gates: project-root
 discovery, path spelling, file walking, small string utilities, and the
@@ -17,7 +17,7 @@ Ported from lean4-WHATWG-streams' `Gates/Common.lean` at commit `a1383bc`,
 with the root marker changed.
 -/
 
-namespace Gates.Common
+namespace HashGates.Common
 
 /-- Search upward from `directory` for the repository root, identified by the
 library root module `Hash.lean`. -/
@@ -121,4 +121,4 @@ def windowsPathProblems (relativePath : String) : List String :=
   (relativePath.splitOn "/").filterMap fun segment =>
     (windowsSegmentProblem? segment).map fun reason => s!"{segment}: {reason}"
 
-end Gates.Common
+end HashGates.Common

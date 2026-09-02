@@ -1,4 +1,4 @@
-# Gates tooling routing
+# HashGates tooling routing
 
 This boundary contains the repository's gates implemented in Lean: the two
 hash command lines, the vendor seal, the internal-citation gate, and the
@@ -29,10 +29,10 @@ they decide nothing.
 - A gate that writes a projection under `generated/` records that it did,
   names the file, and never writes an `AGENTS.md`.
 - Neither hash command line holds hash arithmetic of its own.
-  `Gates/Sha256.lean` computes every digest through `Hash.Sha256.sha256` and
+  `HashGates/Sha256.lean` computes every digest through `Hash.Sha256.sha256` and
   `Hash.Sha256.sha224` and every hexadecimal spelling through
-  `Hash.Sha256.Hex.encode`; `Gates/Sha3.lean` computes through
-  `Hash.Sha3.sha3_512`. `Gates/VendorSeal.lean` computes its row digests
+  `Hash.Sha256.Hex.encode`; `HashGates/Sha3.lean` computes through
+  `Hash.Sha3.sha3_512`. `HashGates/VendorSeal.lean` computes its row digests
   through the SHA-256 API. All of those are audited by the same gate as the
   library, and their meaning is the family's bridge theorem.
 - Neither self-test contains a digest literal. Each reads its sealed CAVP
@@ -47,12 +47,12 @@ they decide nothing.
 
 | Command | Checks | Writes |
 | --- | --- | --- |
-| `lake exe sha256 --self-test` | the proved SHA-256 and SHA-224 against every record of both pinned NIST CAVP short-message files | nothing |
-| `lake exe sha256 <file>…` | nothing; prints the SHA-256 of each file | nothing |
-| `lake exe sha3_512sum --self-test` | the proved SHA3-512 against every record of the pinned NIST CAVP short-message file | nothing |
-| `lake exe sha3_512sum [FILE\|-]` | nothing; prints the SHA3-512 of a file or of standard input | nothing |
-| `lake exe selftest` | every `.rsp` found under `vendor/`, replayed through `Hash.digestHex`; a response file no algorithm claims fails | nothing |
-| `lake exe vendorseal` | `vendor/` against `generated/vendor-manifest.tsv` in both directions; Windows path validity | nothing |
-| `lake exe vendorseal --write` | Windows path validity | `generated/vendor-manifest.tsv` |
-| `lake exe citations` | no line-numbered citation into a protected authored document | nothing |
-| `lake exe trustselftest` | the declared red set; then planted `partial`, `unsafe`, `sorry`, `native_decide`, malformed literals, and an unreachable module are each rejected for the stated reason | a throwaway copy outside the tree, removed afterwards |
+| `lake exe hash_sha256 --self-test` | the proved SHA-256 and SHA-224 against every record of both pinned NIST CAVP short-message files | nothing |
+| `lake exe hash_sha256 <file>…` | nothing; prints the SHA-256 of each file | nothing |
+| `lake exe hash_sha3_512sum --self-test` | the proved SHA3-512 against every record of the pinned NIST CAVP short-message file | nothing |
+| `lake exe hash_sha3_512sum [FILE\|-]` | nothing; prints the SHA3-512 of a file or of standard input | nothing |
+| `lake exe hash_selftest` | every `.rsp` found under `vendor/`, replayed through `Hash.digestHex`; a response file no algorithm claims fails | nothing |
+| `lake exe hash_vendorseal` | `vendor/` against `generated/vendor-manifest.tsv` in both directions; Windows path validity | nothing |
+| `lake exe hash_vendorseal --write` | Windows path validity | `generated/vendor-manifest.tsv` |
+| `lake exe hash_citations` | no line-numbered citation into a protected authored document | nothing |
+| `lake exe hash_trustselftest` | the declared red set; then planted `partial`, `unsafe`, `sorry`, `native_decide`, malformed literals, and an unreachable module are each rejected for the stated reason | a throwaway copy outside the tree, removed afterwards |

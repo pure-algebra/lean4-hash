@@ -1,9 +1,9 @@
 import Hash.Sha3
-import Gates.Common
-import Gates.Cavp
+import HashGates.Common
+import HashGates.Cavp
 
 /-!
-# Gates.Sha3
+# HashGates.Sha3
 
 The command-line face of the proved SHA3-512 library, and the file and
 standard-input adapter. `IO` stays outside the pure `Hash.Sha3` namespace:
@@ -16,8 +16,8 @@ behaviour, outside the pure library's refinement theorem.
 **The self-test contains no literal.** It reads
 `vendor/nist-cavp-sha3-512/SHA3_512ShortMsg.rsp` — NIST CAVP, vendored out of
 the prior art's git object and sealed by `generated/vendor-manifest.tsv` — at
-run time through `Gates.Cavp` and reproduces every record in it. It mirrors
-`lake exe sha256 --self-test`, and like it cannot drift from the pin: if the
+run time through `HashGates.Cavp` and reproduces every record in it. It mirrors
+`lake exe hash_sha256 --self-test`, and like it cannot drift from the pin: if the
 vendored bytes change the seal fails, and if the implementation changes this
 fails.
 
@@ -25,11 +25,11 @@ This file continues the history of foldlab's `formal/fips202/Sha3Sum.lean`,
 moved here from commit `64be4b2c`. The adapter's behaviour is unchanged — one
 optional argument, `-` or nothing meaning standard input, output
 `<128 lowercase hex digits>  <name>` — and `--self-test` is added beside it,
-so that `bin/Sha3Sum.lean` can be the one-line entry point `bin/` is allowed
-to hold.
+so that `hashbin/Sha3Sum.lean` can be the one-line entry point `hashbin/` is
+allowed to hold.
 -/
 
-namespace Gates.Sha3
+namespace HashGates.Sha3
 
 /-- Hexadecimal SHA3-512 of a byte array, through the proved library. -/
 def hexDigest (message : ByteArray) : String := (Hash.Sha3.sha3_512 message).toHex
@@ -50,11 +50,11 @@ def requiredLens : List Nat := [0, 24, 568, 576]
 
 /-- Reproduce every pinned CAVP record. Returns `true` when all match. -/
 def selfTest : IO Bool := do
-  let root ← Gates.Common.projectRoot
+  let root ← HashGates.Common.projectRoot
   let path := vectorsPath root
-  let relative ← Gates.Common.relativeTo root path
+  let relative ← HashGates.Common.relativeTo root path
   let (failures, count) ←
-    Gates.Cavp.checkVectors root path Hash.Sha3.Hex.decode? requiredLens hexDigest
+    HashGates.Cavp.checkVectors root path Hash.Sha3.Hex.decode? requiredLens hexDigest
   if failures.isEmpty then
     IO.println s!"PASS sha3_512 self-test: {count} CAVP records from {relative} reproduced, including Len = 0, 24, 568 and 576"
     return true
@@ -63,7 +63,7 @@ def selfTest : IO Bool := do
   return false
 
 def usage : String :=
-  "usage: lake exe sha3_512sum --self-test\n       lake exe sha3_512sum [FILE|-]"
+  "usage: lake exe hash_sha3_512sum --self-test\n       lake exe hash_sha3_512sum [FILE|-]"
 
 /-- Digest one file, or standard input when the name is `-`. -/
 def emit (name : String) : IO UInt32 := do
@@ -72,7 +72,7 @@ def emit (name : String) : IO UInt32 := do
   (← IO.getStdout).putStrLn s!"{hexDigest bytes}  {name}"
   return 0
 
-/-- Command-line entry, invoked by `bin/Sha3Sum.lean`. -/
+/-- Command-line entry, invoked by `hashbin/Sha3Sum.lean`. -/
 def cli (args : List String) : IO UInt32 := do
   match args with
   | ["--self-test"] =>
@@ -87,4 +87,4 @@ def cli (args : List String) : IO UInt32 := do
     IO.eprintln usage
     return 2
 
-end Gates.Sha3
+end HashGates.Sha3

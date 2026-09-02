@@ -1,7 +1,7 @@
-import Gates.Common
+import HashGates.Common
 
 /-!
-# Gates.Cavp
+# HashGates.Cavp
 
 The NIST CAVP response-file format, parsed once. Both families' self-tests
 read `.rsp` files of the same shape, so there is one parser for it; what
@@ -29,9 +29,9 @@ drift from the pin: if the vendored bytes change the vendor seal fails, and
 if an implementation changes the self-test fails.
 -/
 
-namespace Gates.Cavp
+namespace HashGates.Cavp
 
-open Gates.Common
+open HashGates.Common
 
 /-- One `Len` / `Msg` / `MD` record of a CAVP response file. -/
 structure Record where
@@ -111,4 +111,4 @@ def checkVectors (root path : System.FilePath)
       failures := failures.push s!"{relative} has no record with Len = {required}"
   return (failures, records.size)
 
-end Gates.Cavp
+end HashGates.Cavp

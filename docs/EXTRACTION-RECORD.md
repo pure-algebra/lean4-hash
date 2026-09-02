@@ -189,11 +189,11 @@ sha3 axiom audit: 571 declarations across 14 modules; ceiling [propext, Quot.sou
 ```
 
 The repository-wide gate, which audits every declaration in `Hash/`,
-`HashTest/` and `Gates/` including private and compiler-generated ones,
+`HashTest/` and `HashGates/` including private and compiler-generated ones,
 reports:
 
 ```text
-Hash module and axiom gate: checked 47 modules and 1618 declarations (223 in the Gates tooling tree); ceiling is [propext, Quot.sound, Classical.choice] for every tree; 122 declaration(s) reach Classical.choice; 0 offenders
+Hash module and axiom gate: checked 47 modules and 1618 declarations (223 in the HashGates tooling tree); ceiling is [propext, Quot.sound, Classical.choice] for every tree; 122 declaration(s) reach Classical.choice; 0 offenders
 ```
 
 ## 5. Vendored bytes
@@ -274,29 +274,29 @@ shape the brief asked for; a sixth commit would have been cleaner history and
 was traded away for that. S1's commit message therefore describes a
 two-ceiling design that S2 replaces.
 
-**D5 — the executables arrive with the libraries they call.** `Gates.Sha256`,
-`Gates.Sha3` and `Gates.VendorSeal` compute every digest through the proved
-library, so none of them can compile before that library exists. S1 shipped
-`citations` and `trustselftest`; `sha256` and `vendorseal` arrived at S2,
-`sha3_512sum` at S3. The CI workflow was written in its final form at S1 and
-became true at S3.
+**D5 — the executables arrive with the libraries they call.**
+`HashGates.Sha256`, `HashGates.Sha3` and `HashGates.VendorSeal` compute every
+digest through the proved library, so none of them can compile before that
+library exists. S1 shipped `hash_citations` and `hash_trustselftest`;
+`hash_sha256` and `hash_vendorseal` arrived at S2, `hash_sha3_512sum` at S3.
+The CI workflow was written in its final form at S1 and became true at S3.
 
-**D6 — a sixth executable, `selftest`.** The plan asked for "one combined
+**D6 — a sixth executable, `hash_selftest`.** The plan asked for "one combined
 self-test that replays every record of every sealed `.rsp`". It is
-`lake exe selftest`, and it discovers the files by walking `vendor/` rather
-than reading a list, so a sealed response file that no algorithm claims is a
-failure.
+`lake exe hash_selftest`, and it discovers the files by walking `vendor/`
+rather than reading a list, so a sealed response file that no algorithm claims
+is a failure.
 
-**D7 — `Sha3Sum.lean` became `Gates/Sha3.lean`, not a `bin/` file.** The
-brief sent it to "the `sha3_512sum` bin entry", but `bin/` in this package
-holds one-line wrappers and no logic, and the file had to grow a `--self-test`
-mode. The CLI logic keeps its history at `Gates/Sha3.lean`;
-`bin/Sha3Sum.lean` is a new four-line entry point.
+**D7 — `Sha3Sum.lean` became `HashGates/Sha3.lean`, not a `hashbin/` file.**
+The brief sent it to "the `sha3_512sum` bin entry", but `hashbin/` in this
+package holds one-line wrappers and no logic, and the file had to grow a
+`--self-test` mode. The CLI logic keeps its history at `HashGates/Sha3.lean`;
+`hashbin/Sha3Sum.lean` is a new four-line entry point.
 
-**D8 — the CAVP parser was lifted into `Gates.Cavp`.** Both self-tests read
-the same file format. The parser takes its hexadecimal codec and its digest
-function from the caller, so each family's self-test still runs entirely
-inside its own family.
+**D8 — the CAVP parser was lifted into `HashGates.Cavp`.** Both self-tests
+read the same file format. The parser takes its hexadecimal codec and its
+digest function from the caller, so each family's self-test still runs
+entirely inside its own family.
 
 **D9 — moved documents were rewritten and headed.** Declaration names and
 in-package paths in `docs/SHA256-DAG.md`, `test/contracts/sha256.contract.md`,
@@ -348,12 +348,12 @@ from the files, not from a console.
 | `lake --wfail build HashVerified` | exit 0 |
 | `lake env leanchecker --fresh Hash.Verified` | exit 0 in 137.0 s, **empty output**, on the closure of that clean build |
 | `lake env leanchecker --fresh Hash.NoSuchModule` | exit 1, `uncaught exception: Could not find any oleans for: Hash.NoSuchModule` — the control that shows the checker ran, and that an empty output above means "checked and silent" rather than "checked nothing" |
-| `lake exe sha256 --self-test` | `PASS sha256 self-test: 65 CAVP records from vendor/nist-cavp-sha256/SHA256ShortMsg.rsp and 65 from vendor/nist-cavp-sha224/SHA224ShortMsg.rsp reproduced, including Len = 0, 24, 440, 448 and 512 in each` |
-| `lake exe sha3_512sum --self-test` | `PASS sha3_512 self-test: 73 CAVP records from vendor/nist-cavp-sha3-512/SHA3_512ShortMsg.rsp reproduced, including Len = 0, 24, 568 and 576` |
-| `lake exe selftest` | `PASS combined self-test: 203 CAVP records reproduced across 3 sealed response file(s) through Hash.digestHex` |
-| `lake exe vendorseal` | `PASS vendor seal: manifest and vendor/ agree in both directions; every path is valid on Windows` |
-| `lake exe citations` | `PASS internal citations: 100 files scanned; no line-numbered citation into a protected authored document` |
-| `lake exe trustselftest` | `PASS trust self-test: every planted declaration was rejected for its stated reason and every control was accepted` |
+| `lake exe hash_sha256 --self-test` | `PASS sha256 self-test: 65 CAVP records from vendor/nist-cavp-sha256/SHA256ShortMsg.rsp and 65 from vendor/nist-cavp-sha224/SHA224ShortMsg.rsp reproduced, including Len = 0, 24, 440, 448 and 512 in each` |
+| `lake exe hash_sha3_512sum --self-test` | `PASS sha3_512 self-test: 73 CAVP records from vendor/nist-cavp-sha3-512/SHA3_512ShortMsg.rsp reproduced, including Len = 0, 24, 568 and 576` |
+| `lake exe hash_selftest` | `PASS combined self-test: 203 CAVP records reproduced across 3 sealed response file(s) through Hash.digestHex` |
+| `lake exe hash_vendorseal` | `PASS vendor seal: manifest and vendor/ agree in both directions; every path is valid on Windows` |
+| `lake exe hash_citations` | `PASS internal citations: 100 files scanned; no line-numbered citation into a protected authored document` |
+| `lake exe hash_trustselftest` | `PASS trust self-test: every planted declaration was rejected for its stated reason and every control was accepted` |
 
 ## 8. Throughput
 
@@ -366,10 +366,10 @@ outside the timed interval.
 
 | Command | Input | Median | Runs (s) | Recorded before |
 | --- | --- | --- | --- | --- |
-| `sha256` | 1 MiB | **0.059192 s** | 0.246169, 0.059192, 0.057193 | 0.058 s |
-| `sha256` | 16 MiB | **0.676698 s** | 0.676394, 0.676698, 0.758188 | 0.680 s |
-| `sha3_512sum` | 1 MiB | **0.664424 s** | 0.801481, 0.660297, 0.664424 | 0.823 s on this host; 0.634853 s in foldlab's own record |
-| `sha3_512sum` | 16 MiB | **9.701413 s** | 9.701413, 9.706067, 9.648456 | 9.875716 s in foldlab's own record |
+| `hash_sha256` | 1 MiB | **0.059192 s** | 0.246169, 0.059192, 0.057193 | 0.058 s |
+| `hash_sha256` | 16 MiB | **0.676698 s** | 0.676394, 0.676698, 0.758188 | 0.680 s |
+| `hash_sha3_512sum` | 1 MiB | **0.664424 s** | 0.801481, 0.660297, 0.664424 | 0.823 s on this host; 0.634853 s in foldlab's own record |
+| `hash_sha3_512sum` | 16 MiB | **9.701413 s** | 9.701413, 9.706067, 9.648456 | 9.875716 s in foldlab's own record |
 
 Nothing regressed: both SHA-256 medians reproduce their recorded figures, and
 both SHA3-512 medians are at or below theirs. The first run of a case is

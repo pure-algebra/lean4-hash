@@ -9,7 +9,7 @@ exclude every `AGENTS.md`; they may neither create nor replace instructions.
 ## Allowed projections
 
 - the vendor manifest: one row per pinned third-party file with its SHA-256
-  and size, written by `lake exe vendorseal --write`;
+  and size, written by `lake exe hash_vendorseal --write`;
 - theorem and axiom receipt tables: one row per declaration with the exact
   axiom set it reaches, joined across hosts and across the move from the
   repositories this package was extracted from;

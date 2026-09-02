@@ -1,9 +1,9 @@
 import Hash.Sha256
-import Gates.Common
-import Gates.Cavp
+import HashGates.Common
+import HashGates.Cavp
 
 /-!
-# Gates.Sha256
+# HashGates.Sha256
 
 The command-line face of the proved SHA-256 library. This module holds no
 hash arithmetic of its own: every digest is `Hash.Sha256.sha256` or
@@ -15,19 +15,19 @@ hash arithmetic of its own: every digest is `Hash.Sha256.sha256` or
 `vendor/nist-cavp-sha256/SHA256ShortMsg.rsp` and
 `vendor/nist-cavp-sha224/SHA224ShortMsg.rsp` — NIST CAVP, CAVS 11.0,
 generated 2011-03-15, both sealed by `generated/vendor-manifest.tsv` — at run
-time through `Gates.Cavp` and reproduces every record in both. The `Len`
+time through `HashGates.Cavp` and reproduces every record in both. The `Len`
 field, not the `Msg` text, is the authority for the message length; the
-reason that matters is in `Gates.Cavp` and in
+reason that matters is in `HashGates.Cavp` and in
 `test/contracts/sha256.contract.md`, E5.
 
-Run `lake exe sha256 --self-test` or `lake exe sha256 <file>`.
+Run `lake exe hash_sha256 --self-test` or `lake exe hash_sha256 <file>`.
 
 Copied from lean4-WHATWG-streams' `Gates/Sha256.lean` at commit `a1383bc`,
-with the namespace changed and the CAVP parser lifted into `Gates.Cavp` so
-that `Gates.Sha3` reads its own pinned file the same way.
+with the namespace changed and the CAVP parser lifted into `HashGates.Cavp` so
+that `HashGates.Sha3` reads its own pinned file the same way.
 -/
 
-namespace Gates.Sha256
+namespace HashGates.Sha256
 
 /-- Hexadecimal SHA-256 of a byte array, through the proved library. -/
 def hexDigest (message : ByteArray) : String := (Hash.Sha256.sha256 message).toHex
@@ -62,16 +62,16 @@ def requiredLens : List Nat := [0, 24, 440, 448, 512]
 /-- Reproduce every pinned CAVP record of both response files. Returns `true`
 when all match. -/
 def selfTest : IO Bool := do
-  let root ← Gates.Common.projectRoot
+  let root ← HashGates.Common.projectRoot
   let path256 := vectorsPath root
   let path224 := vectorsPath224 root
-  let relative256 ← Gates.Common.relativeTo root path256
-  let relative224 ← Gates.Common.relativeTo root path224
+  let relative256 ← HashGates.Common.relativeTo root path256
+  let relative224 ← HashGates.Common.relativeTo root path224
   let decode := Hash.Sha256.Hex.decode?
   let (failures256, count256) ←
-    Gates.Cavp.checkVectors root path256 decode requiredLens hexDigest
+    HashGates.Cavp.checkVectors root path256 decode requiredLens hexDigest
   let (failures224, count224) ←
-    Gates.Cavp.checkVectors root path224 decode requiredLens hexDigest224
+    HashGates.Cavp.checkVectors root path224 decode requiredLens hexDigest224
   let failures := failures256 ++ failures224
   if failures.isEmpty then
     IO.println s!"PASS sha256 self-test: {count256} CAVP records from {relative256} and {count224} from {relative224} reproduced, including Len = 0, 24, 440, 448 and 512 in each"
@@ -81,9 +81,9 @@ def selfTest : IO Bool := do
   return false
 
 def usage : String :=
-  "usage: lake exe sha256 --self-test\n       lake exe sha256 <file>..."
+  "usage: lake exe hash_sha256 --self-test\n       lake exe hash_sha256 <file>..."
 
-/-- Command-line entry, invoked by `bin/Sha256.lean`. -/
+/-- Command-line entry, invoked by `hashbin/Sha256.lean`. -/
 def cli (args : List String) : IO UInt32 := do
   match args with
   | ["--self-test"] =>
@@ -99,4 +99,4 @@ def cli (args : List String) : IO UInt32 := do
       IO.println s!"{← hexDigestOfFile path}  {path}"
     return 0
 
-end Gates.Sha256
+end HashGates.Sha256

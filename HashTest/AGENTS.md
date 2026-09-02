@@ -43,7 +43,7 @@ auxiliary axioms, and any authored `partial` or `unsafe`.
 
 The gate is exhaustive over the compiled environment rather than a
 hand-written theorem list, and it also enforces module closure: a `.lean`
-file under `Hash/`, `HashTest/`, or `Gates/` that no root reaches is a gate
+file under `Hash/`, `HashTest/`, or `HashGates/` that no root reaches is a gate
 failure, not a silently unbuilt file.
 
 Before handoff, run the narrow file directly and the default Lake build, and

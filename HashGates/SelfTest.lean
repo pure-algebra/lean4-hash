@@ -1,11 +1,11 @@
 import Hash
-import Gates.Common
-import Gates.Cavp
-import Gates.Sha256
-import Gates.Sha3
+import HashGates.Common
+import HashGates.Cavp
+import HashGates.Sha256
+import HashGates.Sha3
 
 /-!
-# Gates.SelfTest
+# HashGates.SelfTest
 
 One self-test over **every** sealed NIST CAVP response file, through
 `Hash.digestHex` — the algorithm-indexed surface — rather than through either
@@ -24,12 +24,12 @@ bytes under `vendor/` are the pinned bytes and nothing there is unaccounted
 for, and this says every vector in those bytes is reproduced by the proved
 library.
 
-Run `lake exe selftest`.
+Run `lake exe hash_selftest`.
 -/
 
-namespace Gates.SelfTest
+namespace HashGates.SelfTest
 
-open Gates.Common
+open HashGates.Common
 
 /-- The algorithm whose vectors a sealed response-file directory holds.
 Adding a directory under `vendor/` with `.rsp` files in it and not adding it
@@ -49,9 +49,9 @@ def decoderOf : Hash.Algorithm → (String → Option ByteArray)
 /-- The record lengths each family's contract names as witnesses; a pin that
 has stopped containing one of them fails rather than passing smaller. -/
 def requiredLensOf : Hash.Algorithm → List Nat
-  | .sha256 => Gates.Sha256.requiredLens
-  | .sha224 => Gates.Sha256.requiredLens
-  | .sha3_512 => Gates.Sha3.requiredLens
+  | .sha256 => HashGates.Sha256.requiredLens
+  | .sha224 => HashGates.Sha256.requiredLens
+  | .sha3_512 => HashGates.Sha3.requiredLens
 
 /-- Every `.rsp` under `vendor/`, sorted by path. -/
 def responseFiles (root : System.FilePath) : IO (Array System.FilePath) := do
@@ -81,9 +81,9 @@ def run : IO Bool := do
     match treeNameOf file >>= algorithmOfTree with
     | none =>
       failures := failures.push
-        s!"{relative} is sealed but no algorithm replays it; add its directory to Gates.SelfTest.algorithmOfTree"
+        s!"{relative} is sealed but no algorithm replays it; add its directory to HashGates.SelfTest.algorithmOfTree"
     | some alg =>
-      let (problems, count) ← Gates.Cavp.checkVectors root file
+      let (problems, count) ← HashGates.Cavp.checkVectors root file
         (decoderOf alg) (requiredLensOf alg) (Hash.digestHex alg)
       failures := failures ++ problems
       total := total + count
@@ -96,11 +96,11 @@ def run : IO Bool := do
   for failure in failures do IO.eprintln s!"  {failure}"
   return false
 
-/-- Command-line entry, invoked by `bin/SelfTest.lean`. -/
+/-- Command-line entry, invoked by `hashbin/SelfTest.lean`. -/
 def cli (args : List String) : IO UInt32 := do
   unless args.isEmpty do
-    IO.eprintln "usage: lake exe selftest"
+    IO.eprintln "usage: lake exe hash_selftest"
     return 2
   if ← run then return 0 else return 1
 
-end Gates.SelfTest
+end HashGates.SelfTest

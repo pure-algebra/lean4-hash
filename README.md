@@ -47,7 +47,8 @@ import Hash
 The public root excludes the known-answer evidence and the axiom audits, so a
 consumer never elaborates them; `Hash.Verified` includes them.
 
-Command lines: `lake exe sha256 <file>…` and `lake exe sha3_512sum [FILE|-]`.
+Command lines: `lake exe hash_sha256 <file>…` and
+`lake exe hash_sha3_512sum [FILE|-]`.
 Each also accepts `--self-test`, which replays every record of its sealed
 NIST CAVP file at run time.
 
@@ -95,12 +96,12 @@ permutation refinement lemmas, including both apex theorems.
 lake --wfail build
 lake --wfail build HashVerified
 lake env leanchecker --fresh Hash.Verified
-lake exe sha256 --self-test
-lake exe sha3_512sum --self-test
-lake exe selftest
-lake exe vendorseal
-lake exe citations
-lake exe trustselftest
+lake exe hash_sha256 --self-test
+lake exe hash_sha3_512sum --self-test
+lake exe hash_selftest
+lake exe hash_vendorseal
+lake exe hash_citations
+lake exe hash_trustselftest
 ```
 
 `leanchecker` is bundled with the toolchain and is silent on success. The

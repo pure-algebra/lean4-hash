@@ -73,19 +73,19 @@ and `decode?` provide the same codec for arbitrary byte arrays. Decoding rejects
 odd lengths, uppercase digits, whitespace, and non-hex characters. Round-trip and
 length facts are exported alongside these functions.
 
-Build the command-line adapter with `lake build sha3_512sum`. Run
-`lake exe sha3_512sum FILE`, or omit `FILE` (or pass `-`) to read binary standard
-input. Output is `<128 lowercase hex digits>  <file name>`, with `-` for stdin.
-File access and standard IO are adapter behavior, outside the pure library's
-refinement theorem.
+Build the command-line adapter with `lake build hash_sha3_512sum`. Run
+`lake exe hash_sha3_512sum FILE`, or omit `FILE` (or pass `-`) to read binary
+standard input. Output is `<128 lowercase hex digits>  <file name>`, with `-`
+for stdin. File access and standard IO are adapter behavior, outside the pure
+library's refinement theorem.
 
 ## Measured native throughput
 
 Recorded 2026-09-02 on Windows x86-64, Lean v4.33.1, using the compiled
-`sha3_512sum` executable and seeded pseudo-random binary files. Each median is
-three `Measure-Command` runs, including process startup, file reading, hashing
-and output; fixture generation, independent .NET SHA3-512 calculation and
-compilation are outside the timed interval.
+`hash_sha3_512sum` executable and seeded pseudo-random binary files. Each
+median is three `Measure-Command` runs, including process startup, file
+reading, hashing and output; fixture generation, independent .NET SHA3-512
+calculation and compilation are outside the timed interval.
 
 | Input | Median wall time |
 |---|---:|
@@ -140,7 +140,7 @@ and is silent on success.
 | `Hash/Sha3/Fast.lean` | Native UInt64/ByteArray implementation and refinement to Impl |
 | `Hash/Sha3/Api.lean`, `Hash/Sha3/Digest.lean`, `Hash/Sha3/Hex.lean` | Typed public API, checked widths, canonical hex and their theorems |
 | `Hash/Sha3/Lengths.lean` | Reference output-length and padding theorems |
-| `Gates/Sha3.lean` | Binary file/stdin command-line adapter |
+| `HashGates/Sha3.lean` | Binary file/stdin command-line adapter |
 | `Hash/Sha3/Bridge.lean` | The refinement: abstraction function, round bridges, sponge ladder, apex |
 | `Hash/Sha3/BridgeEvidence.lean` | Evidence-only domain-separation theorem at its unchanged name |
 | `Hash/Sha3/Verified.lean`, `Hash/Sha3/Audit.lean` | Full evidence closure and fail-closed typed axiom audit |

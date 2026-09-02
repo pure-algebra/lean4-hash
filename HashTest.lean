@@ -1,4 +1,4 @@
-import Gates
+import HashGates
 import Hash.Verified
 import HashTest.Counterexamples.Sha256.Mutants
 import HashTest.Audit.AxiomGate

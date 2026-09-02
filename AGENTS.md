@@ -20,7 +20,7 @@ dependencies and sits below every consumer.
 | `test/counterexamples/` | central counterexample register and durable witnesses |
 | `Hash/` | library declarations and proofs |
 | `HashTest/` | Lean witnesses, attacks, receipts, and the axiom gate |
-| `Gates/` | repository gates implemented in Lean |
+| `HashGates/` | repository gates implemented in Lean |
 | `generated/` | deterministic projections only; never hand-edited |
 | `vendor/` | sealed pinned third-party bytes; never edited |
 
@@ -45,7 +45,7 @@ theorem or gate, its assumptions, and what remains open.
 
 **One ceiling**, under operator ruling R-11 (2026-09-02): `propext`,
 `Quot.sound`, and `Classical.choice`, the same for `Hash/`, `HashTest/` and
-`Gates/` alike. There is no admission list, no exemption, and no staleness
+`HashGates/` alike. There is no admission list, no exemption, and no staleness
 check, because nothing needs admitting.
 
 `sorryAx`, `Lean.ofReduceBool`, `Lean.ofReduceNat`, and `Lean.trustCompiler`
@@ -87,12 +87,12 @@ orchestrate; they decide nothing.
 | `lake build` | the libraries elaborate; the elaboration-time axiom gate in `HashTest.lean` passes over every declaration |
 | `lake --wfail build HashVerified` | the known-answer tests elaborate and both pinned audit lines still read as written |
 | `lake env leanchecker --fresh Hash.Verified` | an independent kernel replays the verified closure |
-| `lake exe sha256 --self-test` | the proved SHA-256 and SHA-224 reproduce every record of both pinned CAVP files |
-| `lake exe sha3_512sum --self-test` | the proved SHA3-512 reproduces every record of the pinned CAVP file |
-| `lake exe selftest` | every sealed CAVP response file is replayed through `Hash.digestHex`, and none is left unclaimed by any algorithm |
-| `lake exe vendorseal` | `vendor/` and `generated/vendor-manifest.tsv` agree in both directions; every path is valid on Windows |
-| `lake exe citations` | no line-numbered citation into a protected authored document |
-| `lake exe trustselftest` | the declared red set is exact; planted violations are rejected for their stated reasons |
+| `lake exe hash_sha256 --self-test` | the proved SHA-256 and SHA-224 reproduce every record of both pinned CAVP files |
+| `lake exe hash_sha3_512sum --self-test` | the proved SHA3-512 reproduces every record of the pinned CAVP file |
+| `lake exe hash_selftest` | every sealed CAVP response file is replayed through `Hash.digestHex`, and none is left unclaimed by any algorithm |
+| `lake exe hash_vendorseal` | `vendor/` and `generated/vendor-manifest.tsv` agree in both directions; every path is valid on Windows |
+| `lake exe hash_citations` | no line-numbered citation into a protected authored document |
+| `lake exe hash_trustselftest` | the declared red set is exact; planted violations are rejected for their stated reasons |
 
 ## Generated facts
 

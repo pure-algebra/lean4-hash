@@ -26,7 +26,7 @@ two refinements.
 ## Rules
 
 - Nothing here reads a file, spawns a process, or performs `IO`. A gate that
-  needs to do any of those belongs under `Gates/`.
+  needs to do any of those belongs under `HashGates/`.
 - Totality holds: no `partial`, no `unsafe`, no `opaque`, no `implemented_by`,
   no `extern`.
 - The ceiling is the package ceiling, `propext`, `Quot.sound`, and

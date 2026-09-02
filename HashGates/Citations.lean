@@ -1,7 +1,7 @@
-import Gates.Common
+import HashGates.Common
 
 /-!
-# Gates.Citations
+# HashGates.Citations
 
 The internal-citation gate: no line-numbered citation into a mutable authored
 document of this repository.
@@ -28,9 +28,9 @@ with the protected-document list changed to this repository's authored
 documents.
 -/
 
-namespace Gates.Citations
+namespace HashGates.Citations
 
-open Gates.Common
+open HashGates.Common
 
 /-- Authored documents that may not be cited by line number. Basenames are
 matched as well as full paths.
@@ -121,13 +121,13 @@ def check (root : System.FilePath) : IO UInt32 := do
     IO.eprintln s!"  {v.file} line {v.line}: {v.text}"
   return 1
 
-/-- Command-line entry, invoked by `bin/Citations.lean`. -/
+/-- Command-line entry, invoked by `hashbin/Citations.lean`. -/
 def cli (args : List String) : IO UInt32 := do
   match args with
-  | [] => check (← Gates.Common.projectRoot)
+  | [] => check (← HashGates.Common.projectRoot)
   | ["--root", directory] => check directory
   | _ =>
-    IO.eprintln "usage: lake exe citations [--root <dir>]"
+    IO.eprintln "usage: lake exe hash_citations [--root <dir>]"
     return 2
 
-end Gates.Citations
+end HashGates.Citations

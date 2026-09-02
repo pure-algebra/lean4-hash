@@ -13,7 +13,7 @@ Five boundary routers refine it, and none of them may contradict it:
 | `AGENTS.md` | the repository: authority map, ceilings, gates, standing constraints |
 | `Hash/AGENTS.md` | the library: layer discipline, totality, the two-`Digest` situation |
 | `HashTest/AGENTS.md` | witnesses, attacks, evidence classes, the axiom gate |
-| `Gates/AGENTS.md` | tooling: why the gates are Lean, what each one decides |
+| `HashGates/AGENTS.md` | tooling: why the gates are Lean, what each one decides |
 | `generated/AGENTS.md` | projections: byte-determinism, never hand-edited |
 | `test/AGENTS.md` | contracts, the counterexample register, trust-gate fixtures |
 

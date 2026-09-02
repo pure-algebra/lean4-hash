@@ -48,7 +48,7 @@ lake env lean test/tools/Receipts.lean
 ```
 
 This file is a projection generator, not a library module: it is deliberately
-outside `Hash/`, `HashTest/` and `Gates/` so that the module-closure gate
+outside `Hash/`, `HashTest/` and `HashGates/` so that the module-closure gate
 does not require a root to import it, and it is run explicitly rather than by
 `lake build`. It writes only under `generated/`.
 -/

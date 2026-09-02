@@ -1,7 +1,7 @@
-import Gates.Common
+import HashGates.Common
 
 /-!
-# Gates.TrustSelfTest
+# HashGates.TrustSelfTest
 
 Exercises the elaboration-time trust gate in `HashTest/Audit/AxiomGate.lean`
 by planting declarations it must reject and confirming it rejects them for
@@ -19,7 +19,7 @@ lands. This self-test therefore:
 3. excises the declared red modules from the copy; and
 4. runs the planted-declaration checks against a genuinely green tree.
 
-Run `lake exe trustselftest` from anywhere inside the checkout. It invokes
+Run `lake exe hash_trustselftest` from anywhere inside the checkout. It invokes
 `lake build` in the throwaway copy through the same toolchain.
 
 Ported from lean4-WHATWG-streams' `Gates/TrustSelfTest.lean` at commit
@@ -27,9 +27,9 @@ Ported from lean4-WHATWG-streams' `Gates/TrustSelfTest.lean` at commit
 the module-closure diagnostic changed for this repository.
 -/
 
-namespace Gates.TrustSelfTest
+namespace HashGates.TrustSelfTest
 
-open Gates.Common
+open HashGates.Common
 
 structure Context where
   root : System.FilePath
@@ -37,13 +37,13 @@ structure Context where
 
 def copiedFiles : List String :=
   ["lakefile.toml", "lake-manifest.json", "lean-toolchain",
-   "Hash.lean", "Gates.lean", "HashTest.lean"]
+   "Hash.lean", "HashGates.lean", "HashTest.lean"]
 
 /-- The four Lean trees. `vendor` and `generated` stay out: the probe builds
 the gates but never runs them, so no gate reads a pinned byte or a projection
 at elaboration time. -/
 def copiedTrees : List String :=
-  ["Hash", "HashTest", "Gates", "bin"]
+  ["Hash", "HashTest", "HashGates", "hashbin"]
 
 def fixture (root : System.FilePath) (name : String) : System.FilePath :=
   root / "test" / "fixtures" / "trust-gate" / name
@@ -261,12 +261,12 @@ def run (root : System.FilePath) (probe : System.FilePath) : IO Bool := do
   allOk := allOk && ok
   return allOk
 
-/-- Command-line entry, invoked by `bin/TrustSelfTest.lean`. -/
+/-- Command-line entry, invoked by `hashbin/TrustSelfTest.lean`. -/
 def cli (args : List String) : IO UInt32 := do
   unless args.isEmpty do
-    IO.eprintln "usage: lake exe trustselftest"
+    IO.eprintln "usage: lake exe hash_trustselftest"
     return 2
-  let root ← Gates.Common.projectRoot
+  let root ← HashGates.Common.projectRoot
   let probe ← makeProbe root
   IO.println s!"NOTE probe copy at {probe}"
   let ok ← try
@@ -279,4 +279,4 @@ def cli (args : List String) : IO UInt32 := do
   IO.eprintln "FAIL trust self-test"
   return 1
 
-end Gates.TrustSelfTest
+end HashGates.TrustSelfTest
