@@ -40,7 +40,7 @@ directions.
 The NIST pins carry no upstream license file. FIPS 180-4, FIPS 202, and the
 CAVP response files are works of the US Government, not subject to copyright
 in the United States; they are retained unmodified and are cited by section
-and by record. The repository's own `LICENSE` (Apache-2.0) does not apply to
+and by record. The repository's own `LICENSE` (MIT since 2026-09-02) does not apply to
 anything under `vendor/`.
 
 `.gitattributes` disables end-of-line conversion for the whole repository
