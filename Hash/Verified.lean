@@ -1,5 +1,6 @@
 import Hash
 import Hash.Sha256.Verified
+import Hash.Sha3.Verified
 
 /-!
 # `Hash.Verified` — the audited root

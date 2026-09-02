@@ -134,3 +134,7 @@ end HashReceipts
 #hash_receipts "Hash.Sha256" "Hash.Sha256.Audit" "generated/receipts-sha256.tsv"
 
 #hash_receipt_join "test/receipts/sha256-before-a1383bc.tsv" "generated/receipts-sha256.tsv" "Hash.Sha256" "Sha256"
+
+#hash_receipts "Hash.Sha3" "Hash.Sha3.Audit" "generated/receipts-sha3.tsv"
+
+#hash_receipt_join "test/receipts/sha3-before-64be4b2c.tsv" "generated/receipts-sha3.tsv" "Hash.Sha3" "Sha3"

@@ -86,13 +86,13 @@ conformance beyond the pinned vectors; performance claims as theorems
 (measurements are recorded, never proved); bit-level (non-byte-aligned)
 messages at the executable layer; SHA-384, SHA-512, HMAC.
 
-**What is preserved untouched.** `Gates/Hash/Hash.Sha256.lean` as shipped at P0, until
+**What is preserved untouched.** `Gates/Sha256.lean` as shipped at P0, until
 stage S1.4 retires it behind the API. `generated/vendor-manifest.tsv` bytes.
 Every statement in §4 once R-1 freezes it.
 
 ## 2. Measured baseline (2026-09-01, Windows 11 x86-64, AMD Ryzen 7 8700F, toolchain v4.33.1)
 
-The P0 tooling, `Gates/Hash/Hash.Sha256.lean`: `UInt32` words, `ByteArray` messages,
+The P0 tooling, `Gates/Sha256.lean`: `UInt32` words, `ByteArray` messages,
 `Id.run do` loops with `for` and `mut`, `xs[i]!` indexing, an `Array UInt32`
 message schedule built by `push`.
 
@@ -137,7 +137,7 @@ must not fall below by more than 2×.
 
 - Toolchain `leanprover/lean4:v4.33.1` exactly. No change.
 - Zero Lake dependencies (`lake-manifest.json` packages stay `[]`).
-- Axiom ceiling for `Hash/Hash.Sha256/` is the repository's **semantic ceiling**:
+- Axiom ceiling for `Hash/Sha256/` is the repository's **semantic ceiling**:
   `propext` and `Quot.sound`. This is stricter than fips202, which tolerates
   `Classical.choice`. `Classical.choice` is admitted only for the exact
   string-facing declarations ruling R-3 names, each recorded on the trust
@@ -301,9 +301,9 @@ differ only in how bytes become words and how blocks are cut. That is what
 makes `Bridge` a data-flow proof rather than an arithmetic one.
 
 The two `Impl` length theorems and the padding lemmas live in
-`Hash/Hash.Sha256/Lengths.lean`, not in `Impl.lean`.
+`Hash/Sha256/Lengths.lean`, not in `Impl.lean`.
 
-Known-answer tests on `Impl`, in `Hash/Hash.Sha256/Kats.lean`, reached only from
+Known-answer tests on `Impl`, in `Hash/Sha256/Kats.lean`, reached only from
 `Hash.Sha256.Verified`: compiled `#guard` for W1, W2, E1, E2, E3; kernel
 `decide +kernel` for W1 only, subject to ruling R-4 and its measured cost.
 
@@ -563,20 +563,20 @@ self-test reproduces every record of both files. Names are final.
 ### 5.1 Modules
 
 ```text
-Hash/Hash.Sha256.lean               -- API root: imports Spec, Impl, Lengths, Bridge, Hex, Digest, Api, Fast
-Hash/Hash.Sha256/Spec.lean          -- A1.S1; frozen after S1.1 review
-Hash/Hash.Sha256/Impl.lean          -- A1.S1; frozen after S1.1 review
-Hash/Hash.Sha256/Lengths.lean       -- A1.S1 length and padding theorems
-Hash/Hash.Sha256/Bridge.lean        -- A1.S2
-Hash/Hash.Sha256/Hex.lean           -- A1.S3
-Hash/Hash.Sha256/Digest.lean        -- A1.S3
-Hash/Hash.Sha256/Api.lean           -- A1.S3 public functions and their theorems; ends with the compiled CAVP #guards restated on the API
-Hash/Hash.Sha256/Fast.lean          -- A1.S4
-Hash/Hash.Sha256/Context.lean       -- A1.S5
-Hash/Hash.Sha256/Sha224.lean        -- A1.S6
-Hash/Hash.Sha256/Verified.lean      -- imports Hash.Sha256, Kats, Audit; runs the audit under a #guard_msgs pin
-Hash/Hash.Sha256/Kats.lean          -- Impl-level known-answer tests; reached only from Hash.Sha256.Verified
-Hash/Hash.Sha256/Audit.lean         -- S1.0 axiom audit elaborator for the Hash.Sha256 namespace
+Hash/Sha256.lean               -- API root: imports Spec, Impl, Lengths, Bridge, Hex, Digest, Api, Fast
+Hash/Sha256/Spec.lean          -- A1.S1; frozen after S1.1 review
+Hash/Sha256/Impl.lean          -- A1.S1; frozen after S1.1 review
+Hash/Sha256/Lengths.lean       -- A1.S1 length and padding theorems
+Hash/Sha256/Bridge.lean        -- A1.S2
+Hash/Sha256/Hex.lean           -- A1.S3
+Hash/Sha256/Digest.lean        -- A1.S3
+Hash/Sha256/Api.lean           -- A1.S3 public functions and their theorems; ends with the compiled CAVP #guards restated on the API
+Hash/Sha256/Fast.lean          -- A1.S4
+Hash/Sha256/Context.lean       -- A1.S5
+Hash/Sha256/Sha224.lean        -- A1.S6
+Hash/Sha256/Verified.lean      -- imports Hash.Sha256, Kats, Audit; runs the audit under a #guard_msgs pin
+Hash/Sha256/Kats.lean          -- Impl-level known-answer tests; reached only from Hash.Sha256.Verified
+Hash/Sha256/Audit.lean         -- S1.0 axiom audit elaborator for the Hash.Sha256 namespace
 bin/Sha256.lean           -- unchanged entry point; after S1.4 it calls Hash.Sha256.sha256 through Gates.Sha256.cli
 ```
 
@@ -587,9 +587,9 @@ would otherwise share one build key and one `.olean` with the executable
 root (observed as an `undefined symbol: WinMain` link failure). The file
 `bin/Sha256.lean` is unchanged.
 
-`Hash/Hash.Sha256/` is a fourth library at the semantic ceiling. The repository axiom
+`Hash/Sha256/` is a fourth library at the semantic ceiling. The repository axiom
 gate audits it with the `WhatwgStreams` prefix rule extended to `Hash.Sha256`,
-and the module-closure gate requires every `Hash/Hash.Sha256/*.lean` to be reachable
+and the module-closure gate requires every `Hash/Sha256/*.lean` to be reachable
 from the test root, which imports `Hash.Sha256.Verified`.
 
 ### 5.2 `lakefile.toml` additions (target)
@@ -628,7 +628,7 @@ reviewed.
 
 **Landed 2026-09-02 after coordinator review.** Both pins vendored from
 git objects and sealed; contract drafted with every FIPS citation verified
-against the vendored PDF (tables from page images); `Hash/Hash.Sha256/Audit.lean` and
+against the vendored PDF (tables from page images); `Hash/Sha256/Audit.lean` and
 the `#guard_msgs`-pinned audit line; R-6 options package-wide with a
 warning-free clean build in 13.6 s; `leanchecker --fresh Hash.Sha256.Verified`
 exit 0 with evidence it ran. Measured: a full empty-message `decide +kernel`
@@ -653,20 +653,20 @@ assumptions versus facts-to-prove versus deployment facts, claim-domain
 table); `docs/SHA256-DAG.md` §4 promoted from PROPOSED to FROZEN on R-1;
 `vendor/nist-cavp-sha256/SHA256ShortMsg.rsp` and, on R-4, the FIPS 180-4
 PDF, sealed by `lake exe vendorseal --write`; `docs/PROVENANCE.md` rows;
-`Hash/Hash.Sha256/Audit.lean`; `Hash/Hash.Sha256/Verified.lean` (audit only); `lakefile.toml`
+`Hash/Sha256/Audit.lean`; `Hash/Sha256/Verified.lean` (audit only); `lakefile.toml`
 §5.2; `HashTest/Audit/AxiomGate.lean` prefix list; CI.
 
 **Work.** S1.0.1 Vendor and seal the `.rsp` (and PDF); record the fetch
 commands and blob-hash verification. S1.0.2 Write the Pass A contract in the
 fips202 PASSA shape; every FIPS section cited is verified against the pinned
 PDF's text (the liteparse workflow from foldlab; tables read from page
-images, never from extracted text). S1.0.3 `Hash/Hash.Sha256/Audit.lean`: `elab
+images, never from extracted text). S1.0.3 `Hash/Sha256/Audit.lean`: `elab
 "#sha256_axiom_audit" : command` walking `env.constants` for the `Hash.Sha256`
 prefix excluding `Hash.Sha256.Audit`, calling `Lean.collectAxioms`, throwing on
 any axiom outside `[propext, Quot.sound]` except the R-3 exact list, and
 logging exactly one line: `sha256 axiom audit: <N> declarations across <M>
 modules; ceiling [propext, Quot.sound]; <k> admitted string declarations;
-0 offenders`. Pinned with `#guard_msgs` in `Hash/Hash.Sha256/Verified.lean`. S1.0.4
+0 offenders`. Pinned with `#guard_msgs` in `Hash/Sha256/Verified.lean`. S1.0.4
 Measure and record: kernel cost of `decide +kernel` on a 64-byte `BitVec 32`
 compression probe, to size R-4.
 
@@ -681,8 +681,8 @@ citations green; the measurement table in the report.
 **Purpose.** The transcription and the byte-level reference exist, the
 reference passes the pinned vectors, and its shape obeys §3.3.
 
-**Edit region.** `Hash/Hash.Sha256/Spec.lean`, `Hash/Hash.Sha256/Impl.lean`, `Hash/Hash.Sha256/Lengths.lean`,
-`Hash/Hash.Sha256/Kats.lean`, `Hash/Hash.Sha256/Verified.lean` imports, `Hash/Hash.Sha256.lean`.
+**Edit region.** `Hash/Sha256/Spec.lean`, `Hash/Sha256/Impl.lean`, `Hash/Sha256/Lengths.lean`,
+`Hash/Sha256/Kats.lean`, `Hash/Sha256/Verified.lean` imports, `Hash/Sha256.lean`.
 
 **Work.** Implement A1.S1 exactly. `Spec` definitions carry their FIPS 180-4
 section in a docstring. `Impl` shares `Spec`'s word functions and constants.
@@ -705,7 +705,7 @@ refuted here).
 
 **Purpose.** `Impl.sha256 = Spec.sha256_bytes` on byte-aligned messages.
 
-**Edit region.** `Hash/Hash.Sha256/Bridge.lean` only; `Hash/Hash.Sha256/Lengths.lean` to remove
+**Edit region.** `Hash/Sha256/Bridge.lean` only; `Hash/Sha256/Lengths.lean` to remove
 `private` from helpers a bridge proof needs.
 
 **Work.** Proof order: `bytesOfBits_bitsOfBytes` and its converse through
@@ -731,12 +731,12 @@ is the largest for that reason.
 whose docstring names the theorem that gives it meaning, plus hex and length
 facts.
 
-**Edit region.** `Hash/Hash.Sha256/Hex.lean`, `Hash/Hash.Sha256/Digest.lean`, `Hash/Hash.Sha256/Api.lean`,
-`Hash/Hash.Sha256.lean`; `Gates/Hash/Hash.Sha256.lean` untouched.
+**Edit region.** `Hash/Sha256/Hex.lean`, `Hash/Sha256/Digest.lean`, `Hash/Sha256/Api.lean`,
+`Hash/Sha256.lean`; `Gates/Sha256.lean` untouched.
 
 **Work.** Implement A1.S3 over `Impl`. `sha256 msg := ⟨(Impl.sha256
 msg.data.toList).toByteArray, by rw [List.size_toByteArray,
-Impl.length_sha256]⟩`. `Hash/Hash.Sha256/Api.lean` ends with the five CAVP `#guard`s
+Impl.length_sha256]⟩`. `Hash/Sha256/Api.lean` ends with the five CAVP `#guard`s
 restated on the API. Measure whether any string declaration reaches
 `Classical.choice`; if so, report the exact receipts for R-3 before writing
 any admission.
@@ -751,7 +751,7 @@ report; R-3 evidence attached.
 **Purpose.** Native throughput with no change to what is proved, and every
 digest in the repository computed through the proved library.
 
-**Edit region.** `Hash/Hash.Sha256/Fast.lean`; `Hash/Hash.Sha256/Api.lean` (retarget); `Gates/Hash/Hash.Sha256.lean`
+**Edit region.** `Hash/Sha256/Fast.lean`; `Hash/Sha256/Api.lean` (retarget); `Gates/Sha256.lean`
 (becomes a thin wrapper over `Hash.Sha256.sha256` and `Hash.Sha256.Hex.encode`);
 `Gates/VendorSeal.lean` (calls the API); `Gates/AGENTS.md`.
 
@@ -811,7 +811,7 @@ seat.
 
 ## 8. Consumer migration (Gates), part of S1.4
 
-- `Gates/Hash/Hash.Sha256.lean`: `hexDigest bs := (Hash.Sha256.sha256 bs).toHex`;
+- `Gates/Sha256.lean`: `hexDigest bs := (Hash.Sha256.sha256 bs).toHex`;
   `hexDigestOfFile` unchanged in signature; the seven-vector self-test is
   replaced by the API `#guard`s plus a runtime re-check of W1, W2, E1–E3
   read from the vendored `.rsp` at run time (so the self-test can never drift
@@ -844,7 +844,7 @@ seat.
 | construction | `required-closed` | A1.S1–A1.S4 landed under their frozen names; the seven deviations are recorded in the S1 landing note below and none changes a meaning |
 | semantics | `required-closed` | `Bridge.sha256_bridge` and `Fast.sha256_eq_impl`, both `[propext, Quot.sound]`; the API theorems `sha256_impl`, `sha256_spec`, `sha256_ofList` compose them |
 | laws | `required-closed` | the A1.S2 decomposition (`padBytes_bridge`, `blocks_bridge`, `schedule_bridge`, `compress_bridge`, `hash_bridge`, `output_bridge`) and the A1.S4 pointwise lemmas, all landed |
-| representation | `required-closed` | `Vector`/`Nat.fold`/`byteAt` throughout; the P0 `Id.run do` tooling deleted; `Gates/Hash/Hash.Sha256.lean` is a wrapper over `Hash.Sha256.sha256` |
+| representation | `required-closed` | `Vector`/`Nat.fold`/`byteAt` throughout; the P0 `Id.run do` tooling deleted; `Gates/Sha256.lean` is a wrapper over `Hash.Sha256.sha256` |
 | counterexamples | `required-closed` | `HASH-SHA256-CE-001`..`004` closed with `decide +kernel` witnesses in `HashTest/Counterexamples/Sha256/Mutants.lean`; the contract's claim that W1 detects a missing length field is refuted by `ce002_padBytes_eq_on_empty` and corrected |
 | bridges | `not-applicable` | no host target |
 | targets | `not-applicable` | no generated code |
@@ -861,7 +861,7 @@ bound in scope; the `String`-typed hex theorems are stated on the `List
 Char` form (`length_encodeChars`, `decodeChars?_encodeChars`,
 `encodeChars_lower`, `length_toHexChars`, `ofHexChars?_toHexChars`) because
 `String.length` and `String.toList` reach `Classical.choice` from the
-statement itself; `Hash/Hash.Sha256/Vec.lean` re-proves `Vector.ofFn` access because
+statement itself; `Hash/Sha256/Vec.lean` re-proves `Vector.ofFn` access because
 `Vector.getElem_ofFn`, `Array.toList_ofFn`, `List.drop_take`, and
 `Nat.mod_mul_right_div_self` reach `Classical.choice` in v4.33.1 core;
 `Spec.schedule`/`compress` are factored into named steps so `Fast`'s
