@@ -21,7 +21,4 @@ theorem rcv_eq_lfsr : ∀ (i : Fin 24) (z : Fin 64),
 theorem rhov_eq_walk : ∀ (x y : Fin 5),
     Sha3.Impl.rhov[x.val + 5 * y.val]! = Sha3.Spec.rhoOffset x y % 64 := by decide
 
-#print axioms rcv_eq_lfsr
-#print axioms rhov_eq_walk
-
 end Sha3.Theorems

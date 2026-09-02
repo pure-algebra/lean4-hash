@@ -3,7 +3,6 @@ import Sha3.Impl
 import Sha3.Theorems
 import Sha3.Roundtrips
 import Sha3.Structural
-import Sha3.Kats
 
 /-!
 # The bridge: `abs`, the B1 round chain, and the B2 sponge ladder (REV2 frozen statements)
@@ -11,12 +10,15 @@ import Sha3.Kats
 `abs` maps the executable lane state to the specification state array. The B1 lemmas prove each
 Impl round step commutes with its Spec counterpart through `abs`; the B2 ladder extends the
 refinement through lane packing, padding, absorption, and squeeze to the byte-level pipeline,
-closing at `sha3_512_bridge`, `keccak512_prefips_bridge`, and `sha3_ne_prefips_spec`. Structural
-proofs only — no mass kernel reduction. Axiom ceiling per theorem:
+closing here at `sha3_512_bridge` and `keccak512_prefips_bridge`. The Kats-dependent
+`sha3_ne_prefips_spec` evidence theorem lives in `Sha3.BridgeEvidence` under ruling R-10.
+Structural proofs only — no mass kernel reduction. Axiom ceiling per theorem:
 `[propext, Classical.choice, Quot.sound]`.
 -/
 
 namespace Sha3.Bridge
+
+universe u v
 
 /-- The abstraction function (frozen in the Pass B snapshot): bit `z` of lane `(x, y)`,
 lane index `x + 5y` (§3.1.2 packing), LSB-first within lanes (B.1). -/
@@ -46,7 +48,6 @@ theorem chi_bridge (s : Sha3.Impl.St) :
     decide_eq_true z.isLt, Bool.true_and, Fin.val_add, Fin.val_one, h2,
     Nat.mod_eq_of_lt x.isLt, Nat.mod_eq_of_lt y.isLt]
 
-#print axioms chi_bridge
 
 /-- B1θ: the θ step commutes with abstraction. -/
 theorem theta_bridge (s : Sha3.Impl.St) :
@@ -74,7 +75,6 @@ theorem theta_bridge (s : Sha3.Impl.St) :
   · have hz1 : (z.val + 63) % 64 = z.val - 1 := by omega
     simp [hz, hz1, Fin.val_add, v3, v4, hmm]
 
-#print axioms theta_bridge
 
 /-- B1ρπ: the fused ρπ step commutes with abstraction — `abs ∘ Impl.rhoPi = Spec.pi ∘ Spec.rho ∘ abs`.
 Consumes T2 (`rhov_eq_walk`) to connect the offset table to the Algorithm 2 walk. -/
@@ -112,7 +112,6 @@ theorem rhoPi_bridge (s : Sha3.Impl.St) :
   · have h1 : (z.val + 64 - r) % 64 = z.val - r := by omega
     simp [hzr, h1]
 
-#print axioms rhoPi_bridge
 
 private theorem vget24 (v : Vector (BitVec 64) 24) (i : Nat) (h : i < 24) : v[i]! = v[i] :=
   getElem!_pos v i h
@@ -141,7 +140,6 @@ theorem iota_bridge (b : Sha3.Impl.St) (i : Nat) (hi : i < 24) :
       exact h00 ⟨Fin.ext (by omega), Fin.ext (by omega)⟩
     rw [vget _ _ (by omega), vget _ _ (by omega), Vector.getElem_set_ne _ _ (by omega)]
 
-#print axioms iota_bridge
 
 /-- B1-rnd: one round commutes with abstraction (θ → ρπ → χ → ι composed). -/
 theorem rnd_bridge (s : Sha3.Impl.St) (i : Fin 24) :
@@ -150,7 +148,6 @@ theorem rnd_bridge (s : Sha3.Impl.St) (i : Fin 24) :
   simp only []
   rw [iota_bridge _ _ i.isLt, chi_bridge, rhoPi_bridge, theta_bridge]
 
-#print axioms rnd_bridge
 
 /-- B1: the full permutation commutes with abstraction —
 `abs ∘ Impl.keccakF = Spec.keccakP ∘ abs`. The apex of the per-round chain. -/
@@ -168,7 +165,6 @@ theorem keccakF_bridge (s : Sha3.Impl.St) :
           rnd_bridge t ⟨a, h a List.mem_cons_self⟩]
   exact hgen (List.range 24) (fun j hj => List.mem_range.mp hj) s
 
-#print axioms keccakF_bridge
 
 private theorem testBit_eq_shift_and (b j : Nat) :
     b.testBit j = (((b >>> j) &&& 1) == 1) := by
@@ -280,13 +276,13 @@ private theorem getLsbD_laneOfBytes (bs : List UInt8) (i z : Nat) (hz : z < 64) 
                 simp [hz, h8, h16, h24, h32, h40, h48, h56, hz56, hd, hm,
                   hb0, hb1, hb2, hb3, hb4, hb5, hb6]
 
-private theorem getD_append_left (as bs : List α) (i : Nat) (d : α)
+private theorem getD_append_left {α : Type u} (as bs : List α) (i : Nat) (d : α)
     (h : i < as.length) :
     (as ++ bs).getD i d = as.getD i d := by
   simp only [List.getD_eq_getElem?_getD]
   rw [List.getElem?_append_left h]
 
-private theorem getD_append_right (as bs : List α) (i : Nat) (d : α)
+private theorem getD_append_right {α : Type u} (as bs : List α) (i : Nat) (d : α)
     (h : as.length ≤ i) :
     (as ++ bs).getD i d = bs.getD (i - as.length) d := by
   simp only [List.getD_eq_getElem?_getD]
@@ -479,7 +475,7 @@ private theorem bytesOfLane_bit (w : Sha3.Impl.W) (j k : Nat)
   rw [getD_bitsOfByte _ _ hk, getD_bytesOfLane _ _ hj,
     byteSliceBit _ _ _ hj hk]
 
-private theorem getD_flatMap_fixed (xs : List α) (f : α → List β)
+private theorem getD_flatMap_fixed {α : Type u} {β : Type v} (xs : List α) (f : α → List β)
     (n K j : Nat) (d : β) (hlen : ∀ a ∈ xs, (f a).length = n)
     (hK : K < xs.length) (hj : j < n) :
     (xs.flatMap f).getD (n * K + j) d = (f xs[K]).getD j d := by
@@ -906,67 +902,5 @@ theorem keccak512_prefips_bridge (msg : List UInt8) :
     Sha3.Roundtrips.length_bitsOfBytes msg
   rw [hlen]
   rw [← prefipsPadBytes_bridge]
-
-/-- T10-SPEC: the domain-separation suffix changes the frozen spec digest. -/
-theorem sha3_ne_prefips_spec :
-    Sha3.Spec.keccakC 1024 (Sha3.Spec.bitsOfBytes []) 512 ≠
-      Sha3.Spec.SHA3_512 (Sha3.Spec.bitsOfBytes []) := by
-  intro h
-  apply Sha3.Kats.sha3_ne_prefips
-  rw [keccak512_prefips_bridge, sha3_512_bridge]
-  unfold Sha3.Spec.sha3_512_bytes
-  exact congrArg Sha3.Spec.bytesOfBits h
-
-#print axioms testBit_eq_shift_and
-#print axioms byte_testBit_ge_eight
-#print axioms getLsbD_laneOfBytes
-#print axioms getD_append_left
-#print axioms getD_append_right
-#print axioms getD_bitsOfBytes
-#print axioms laneOfBytes_bridge
-#print axioms bitsOfByte_86
-#print axioms bitsOfByte_06
-#print axioms bitsOfByte_00
-#print axioms bitsOfByte_80
-#print axioms bitsOfBytes_append
-#print axioms bitsOfBytes_replicate_zero
-#print axioms padBytes_bridge
-#print axioms xor_abs_bridge
-#print axioms loadBlock_bridge
-#print axioms absorbBlock_bridge
-#print axioms absorbBlocks_bridge
-#print axioms getD_bitsOfByte
-#print axioms getD_bytesOfLane
-#print axioms byteSliceBit
-#print axioms bytesOfLane_bit
-#print axioms getD_flatMap_fixed
-#print axioms length_bytesOfLane
-#print axioms length_squeezeBytes
-#print axioms getD_squeezeBytes
-#print axioms getD_bitsOfSqueezeBytes
-#print axioms getD_take_bitsOfState
-#print axioms bitsOfSqueezeBytes
-#print axioms squeeze_bridge
-#print axioms bitsOfBytes_take
-#print axioms bitsOfBytes_drop
-#print axioms bitsOfBytes_block
-#print axioms state_bits_roundtrip
-#print axioms stateOfBits_paddedBlock
-#print axioms stateOfBits_listXor
-#print axioms stateOfBits_absorbInput
-#print axioms absorbBlock_bits_bridge
-#print axioms block_length
-#print axioms absorbIndices_bridge
-#print axioms bitsOfState_abs_zero
-#print axioms absorbP_bridge
-#print axioms absorbStep_fold
-#print axioms absorbAll_eq
-#print axioms sha3_512_bridge
-#print axioms bitsOfByte_81
-#print axioms bitsOfByte_01
-#print axioms absorbP_rateBytes_bridge
-#print axioms prefipsPadBytes_bridge
-#print axioms keccak512_prefips_bridge
-#print axioms sha3_ne_prefips_spec
 
 end Sha3.Bridge

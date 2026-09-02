@@ -124,8 +124,4 @@ theorem length_SHA3_512 (M : List Bool) : (SHA3_512 M).length = 512 := by
   rw [List.length_take, List.length_take, length_absorb576]
   omega
 
-#print axioms pad101_length
-#print axioms pad101_encoding_inj
-#print axioms length_SHA3_512
-
 end Sha3.Structural

@@ -70,9 +70,4 @@ theorem sha3_ne_prefips : keccak512_prefips [] ≠ sha3_512 [] := by decide
 
 example : keccak512_prefips [] ≠ sha3_512 [] := sha3_ne_prefips
 
-#print axioms kat_keccakF_zero
-#print axioms kat_sha3_512_empty
-#print axioms kat_sha3_512_37d518
-#print axioms sha3_ne_prefips
-
 end Sha3.Kats

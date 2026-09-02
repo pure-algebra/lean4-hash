@@ -80,6 +80,4 @@ example : keccakF zero = #v[
   0x940c7922ae3a2614, 0x1841f924a2c509e4, 0x16f53526e70465c2, 0x75f644e97f30a13b,
   0xeaf1ff7b5ceca249] := katFull
 
-#print axioms katFull
-
 end Sha3.Probe

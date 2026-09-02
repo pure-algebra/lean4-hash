@@ -16,10 +16,76 @@ open Sha3.Spec
 theorem length_bitsOfByte (b : UInt8) : (bitsOfByte b).length = 8 := by
   simp [bitsOfByte]
 
-private theorem byte_roundtrip_fin :
-    ∀ n : Fin 256, byteOfBits (bitsOfByte (UInt8.ofNat n.val)) = UInt8.ofNat n.val := by decide
+private def lowBits (n k : Nat) : Nat :=
+  (List.range k).foldl (fun acc j => acc + if n.testBit j then 2 ^ j else 0) 0
 
-/-- Per-byte round trip, all 256 cases decided. -/
+private theorem lowBits_spec (n k : Nat) :
+    lowBits n k < 2 ^ k ∧
+      ∀ i, (lowBits n k).testBit i = if i < k then n.testBit i else false := by
+  induction k with
+  | zero =>
+      constructor
+      · simp [lowBits]
+      · intro i
+        simp [lowBits]
+  | succ k ih =>
+      have hstep : lowBits n k.succ = lowBits n k + if n.testBit k then 2 ^ k else 0 := by
+        simp [lowBits, List.range_succ, List.foldl_append]
+      rw [hstep]
+      constructor
+      · by_cases hk : n.testBit k
+        · rw [if_pos hk, Nat.pow_succ, Nat.mul_two]
+          exact (Nat.add_lt_add_iff_right).2 ih.1
+        · rw [if_neg hk, Nat.add_zero, Nat.pow_succ, Nat.mul_two]
+          exact Nat.lt_trans ih.1 (Nat.lt_add_of_pos_right (Nat.two_pow_pos k))
+      · intro i
+        by_cases hk : n.testBit k
+        · rw [if_pos hk, ← Nat.or_two_pow_eq_add_of_lt ih.1, Nat.testBit_or, ih.2 i,
+              Nat.testBit_two_pow]
+          by_cases hik : i < k
+          · have his : i < k.succ := Nat.lt_succ_of_lt hik
+            have hki : ¬ k = i := Nat.ne_of_gt hik
+            simp [hik, his, hki]
+          · by_cases hieq : i = k
+            · subst i
+              simp [hk]
+            · have his : ¬ i < k.succ := by
+                rw [Nat.lt_succ_iff_lt_or_eq]
+                simp [hik, hieq]
+              have hki : ¬ k = i := by
+                intro h
+                exact hieq h.symm
+              simp [hik, his, hki]
+        · rw [if_neg hk, Nat.add_zero, ih.2 i]
+          by_cases hik : i < k
+          · have his : i < k.succ := Nat.lt_succ_of_lt hik
+            simp [hik, his]
+          · by_cases hieq : i = k
+            · subst i
+              simp [hk]
+            · have his : ¬ i < k.succ := by
+                rw [Nat.lt_succ_iff_lt_or_eq]
+                simp [hik, hieq]
+              simp [hik, his]
+
+private theorem lowBits_eq_mod (n k : Nat) : lowBits n k = n % 2 ^ k := by
+  apply Nat.eq_of_testBit_eq
+  intro i
+  rw [(lowBits_spec n k).2 i, Nat.testBit_mod_two_pow]
+  by_cases hik : i < k <;> simp [hik]
+
+private theorem byte_roundtrip_fin :
+    ∀ n : Fin 256, byteOfBits (bitsOfByte (UInt8.ofNat n.val)) = UInt8.ofNat n.val := by
+  intro n
+  have hvalue : lowBits n.val 8 = n.val := by
+    rw [lowBits_eq_mod, Nat.mod_eq_of_lt n.isLt]
+  apply UInt8.toNat_inj.mp
+  have hmod := congrArg (fun x : Nat => x % 256) hvalue
+  simpa [byteOfBits, bitsOfByte, lowBits, Nat.testBit,
+    show List.range 8 = [0, 1, 2, 3, 4, 5, 6, 7] from rfl,
+    Nat.mod_eq_of_lt n.isLt] using hmod
+
+/-- Per-byte round trip over the bounded byte representation. -/
 theorem byte_roundtrip (b : UInt8) : byteOfBits (bitsOfByte b) = b := by
   have h := byte_roundtrip_fin ⟨b.toNat, b.toNat_lt⟩
   simpa [UInt8.ofNat_toNat] using h
@@ -66,13 +132,78 @@ theorem bytes_bits_roundtrip (bs : List UInt8) : bytesOfBits (bitsOfBytes bs) = 
     rw [show bitsOfBytes (b :: t) = bitsOfByte b ++ bitsOfBytes t from rfl,
         bytesOfBits_append8 _ _ (length_bitsOfByte b), byte_roundtrip, ih]
 
+private def packedBits (l : List Bool) (k : Nat) : Nat :=
+  (List.range k).foldl (fun acc j => acc + if l.getD j false then 2 ^ j else 0) 0
+
+private theorem packedBits_spec (l : List Bool) (k : Nat) :
+    packedBits l k < 2 ^ k ∧
+      ∀ i, (packedBits l k).testBit i = if i < k then l.getD i false else false := by
+  induction k with
+  | zero =>
+      constructor
+      · simp [packedBits]
+      · intro i
+        simp [packedBits]
+  | succ k ih =>
+      have hstep :
+          packedBits l k.succ = packedBits l k + if l.getD k false then 2 ^ k else 0 := by
+        simp [packedBits, List.range_succ, List.foldl_append]
+      rw [hstep]
+      constructor
+      · by_cases hk : l.getD k false
+        · rw [if_pos hk, Nat.pow_succ, Nat.mul_two]
+          exact (Nat.add_lt_add_iff_right).2 ih.1
+        · rw [if_neg hk, Nat.add_zero, Nat.pow_succ, Nat.mul_two]
+          exact Nat.lt_trans ih.1 (Nat.lt_add_of_pos_right (Nat.two_pow_pos k))
+      · intro i
+        by_cases hk : l.getD k false
+        · rw [if_pos hk, ← Nat.or_two_pow_eq_add_of_lt ih.1, Nat.testBit_or, ih.2 i,
+              Nat.testBit_two_pow]
+          by_cases hik : i < k
+          · have his : i < k.succ := Nat.lt_succ_of_lt hik
+            have hki : ¬ k = i := Nat.ne_of_gt hik
+            simp [hik, his, hki]
+          · by_cases hieq : i = k
+            · subst i
+              simp only [Nat.lt_irrefl, Nat.lt_succ_self, if_false, if_true, eq_self, hk]
+              rfl
+            · have his : ¬ i < k.succ := by
+                rw [Nat.lt_succ_iff_lt_or_eq]
+                simp [hik, hieq]
+              have hki : ¬ k = i := by
+                intro h
+                exact hieq h.symm
+              simp [hik, his, hki]
+        · rw [if_neg hk, Nat.add_zero, ih.2 i]
+          by_cases hik : i < k
+          · have his : i < k.succ := Nat.lt_succ_of_lt hik
+            simp [hik, his]
+          · by_cases hieq : i = k
+            · subst i
+              simp only [Nat.lt_irrefl, Nat.lt_succ_self, if_false, if_true, hk]
+            · have his : ¬ i < k.succ := by
+                rw [Nat.lt_succ_iff_lt_or_eq]
+                simp [hik, hieq]
+              simp [hik, his]
+
 /-- Per-block inverse: eight bits survive the byte round trip. -/
 private theorem bits_byte_roundtrip : ∀ (l : List Bool), l.length = 8 →
-    bitsOfByte (byteOfBits l) = l
-  | [a, b, c, d, e, f, g, h], _ => by revert a b c d e f g h; decide
-  | a :: b :: c :: d :: e :: f :: g :: h :: i :: rest, hl => by
-      simp only [List.length_cons] at hl
-      omega
+    bitsOfByte (byteOfBits l) = l := by
+  intro l hl
+  have hs := packedBits_spec l 8
+  have hnat : (byteOfBits l).toNat = packedBits l 8 := by
+    unfold byteOfBits
+    change (UInt8.ofNat (packedBits l 8)).toNat = packedBits l 8
+    exact UInt8.toNat_ofNat_of_lt' hs.1
+  apply List.ext_getElem
+  · simp [bitsOfByte, hl]
+  · intro i h1 h2
+    simp only [bitsOfByte, List.getElem_map, List.getElem_range]
+    have hi8 : i < 8 := by simpa [hl] using h2
+    have hb := hs.2 i
+    rw [if_pos hi8] at hb
+    rw [List.getElem_eq_getD false]
+    simpa [Nat.testBit, hnat] using hb
 
 /-- T6b: bits → bytes → bits is the identity on whole-byte strings. -/
 theorem bits_bytes_roundtrip (bits : List Bool) (h : bits.length % 8 = 0) :
@@ -104,9 +235,5 @@ theorem bits_state_roundtrip (S : List Bool) (hS : S.length = 1600) :
     simp only [bitsOfState, List.getElem_map, List.getElem_range, stateOfBits]
     have hidx : 64 * (5 * (i / 64 / 5 % 5) + i / 64 % 5) + i % 64 = i := by omega
     rw [hidx, List.getD_eq_getElem?_getD, List.getElem?_eq_getElem h2, Option.getD_some]
-
-#print axioms bytes_bits_roundtrip
-#print axioms bits_bytes_roundtrip
-#print axioms bits_state_roundtrip
 
 end Sha3.Roundtrips
