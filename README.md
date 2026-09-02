@@ -120,4 +120,4 @@ the move, and every deviation from the plan.
 
 ## Licence
 
-Apache-2.0. See `LICENSE`.
+MIT, unified with the rest of the family. See `LICENSE`.
