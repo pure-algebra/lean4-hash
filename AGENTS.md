@@ -56,11 +56,13 @@ forbidden in all four Lean trees.
 
 The two families do not in fact reach the same axioms, and that difference
 stays visible without being a gate: each family's audit line reports how many
-of its declarations reach `Classical.choice` (SHA-256: none; SHA3: the
-`String`-typed declarations it arrived with), and
-`docs/EXTRACTION-RECORD.md` records both counts. Ruling HP-2 (parity later)
-still governs the `Digest`/`Hex` unification, which is a separate question
-from the ceiling.
+of its declarations reach `Classical.choice`. SHA-256 reaches none. SHA3-512
+reaches it in 45 of 571 — not only its hexadecimal codec but its sponge and
+permutation refinement lemmas, including both apex theorems.
+`docs/EXTRACTION-RECORD.md` lists them by group and explains why that makes
+step 9 of the plan larger than the plan estimates. Ruling HP-2 (parity later)
+governs the `Digest`/`Hex` unification, which is a separate question from the
+ceiling.
 
 ## Standing constraints
 

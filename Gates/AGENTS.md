@@ -33,8 +33,8 @@ they decide nothing.
   `Hash.Sha256.sha224` and every hexadecimal spelling through
   `Hash.Sha256.Hex.encode`; `Gates/Sha3.lean` computes through
   `Hash.Sha3.sha3_512`. `Gates/VendorSeal.lean` computes its row digests
-  through the SHA-256 API. All of those are audited at the semantic ceiling
-  and their meaning is the family's bridge theorem.
+  through the SHA-256 API. All of those are audited by the same gate as the
+  library, and their meaning is the family's bridge theorem.
 - Neither self-test contains a digest literal. Each reads its sealed CAVP
   `.rsp` at run time and reproduces every record in it, so it cannot drift
   from the pin: if the vendored bytes change the seal fails, and if an

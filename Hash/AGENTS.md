@@ -51,9 +51,12 @@ Ruling HP-2 (parity later, `docs/HASH-PACKAGE-PLAN.md`) is in force:
 `Hash.Sha256.Digest` and `Hash.Sha3.Digest` coexist, as do the two `Hex`
 codecs. They are not unified here, and no theorem of either family is
 restated to make them agree; a conversion between the two `Digest` types is
-explicit at every call site. Step 9 of the plan owns the unification. Note
-that HP-2 is now only about duplication: ruling R-11 removed the ceiling
-difference that used to be the other half of the debt.
+explicit at every call site. Step 9 of the plan owns the unification.
+
+HP-2 is now only about duplication: ruling R-11 removed the ceiling
+difference that used to be the other half of the debt. The axiom difference
+itself did not go away, and it is larger than the plan assumed — see
+`docs/EXTRACTION-RECORD.md` §4.
 
 ## Changing a statement
 

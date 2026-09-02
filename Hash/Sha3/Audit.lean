@@ -11,10 +11,12 @@ two verdict lines can be read side by side. The set of axioms admitted is the
 same set fips202 admitted.
 
 The verdict line also reports how many declarations actually reach
-`Classical.choice`. For this family that number is not zero — the
-`String`-typed declarations it was proved with reach it — and the count is
-what makes that visible without a gate. `docs/EXTRACTION-RECORD.md` compares
-it with the SHA-256 family's.
+`Classical.choice`. For this family that number is not zero: 45 of 571, and
+they are not only the hexadecimal codec but the sponge and permutation
+refinement lemmas, `Bridge.sha3_512_bridge` and `Fast.sha3_512_eq_impl`
+included. `docs/EXTRACTION-RECORD.md` lists them by group and compares them
+with the SHA-256 family's zero. The count is what keeps that visible without
+making it a gate.
 -/
 
 open Lean Elab Command

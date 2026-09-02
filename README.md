@@ -78,10 +78,16 @@ To believe the theorems you must trust exactly two things:
 
 No custom axioms, no `native_decide`, no `bv_decide`, no `sorry`, no
 dependencies. The package ceiling is `[propext, Quot.sound,
-Classical.choice]`. Within it, the SHA-256 family reaches no
-`Classical.choice` at all, and the SHA3 family reaches it only through
-`String` lemmas; each family's audit line reports its own count, and
-`docs/EXTRACTION-RECORD.md` records both.
+Classical.choice]`, and each family's audit line reports how much of that it
+actually uses.
+
+The two families differ here, and the difference is worth stating plainly.
+The SHA-256 family reaches no `Classical.choice` at all: its bridge to
+FIPS 180-4 and its native-layer refinement are closed at
+`[propext, Quot.sound]`. The SHA3-512 family reaches it in 45 of its 571
+audited declarations — its hexadecimal codec, and also its sponge and
+permutation refinement lemmas, including both apex theorems.
+`docs/EXTRACTION-RECORD.md` lists them by group.
 
 ## Checking it yourself
 
