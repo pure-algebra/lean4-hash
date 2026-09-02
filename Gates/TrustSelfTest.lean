@@ -191,15 +191,17 @@ uses `sorry`" warning is already an elaboration error, so a planted `sorry`
 never reaches the axiom gate and the gate's `sorryAx` line cannot appear.
 Both diagnostics are accepted for that plant: each is a rejection for the
 stated reason, and which layer fires first depends on the package options,
-not on the plant. -/
+not on the plant.
+
+There is no `Classical.choice` plant. Ruling R-11 admits `Classical.choice`
+in every tree, so a declaration reaching it is no longer a violation and
+there is nothing for such a plant to prove. What the ceiling still forbids —
+`sorry`, `native_decide`, `partial`, `unsafe` — is planted below. -/
 def rejectionPlants : List Plant :=
   [{ label := "partial declaration", fixtureName := "partial.lean.txt", target := auditSource,
      expected := ["contains an authored `partial` declaration modifier"] },
    { label := "unsafe declaration", fixtureName := "unsafe.lean.txt", target := auditSource,
      expected := ["contains an authored `unsafe` declaration modifier"] },
-   { label := "unadmitted Classical.choice in the library tree",
-     fixtureName := "unadmitted-choice.lean.txt", target := productionRoot,
-     expected := ["reaches unexpected axiom Classical.choice"] },
    { label := "sorry in the library tree", fixtureName := "sorry.lean.txt",
      target := productionRoot,
      expected := ["reaches forbidden axiom sorryAx", "declaration uses `sorry`"] },

@@ -11,6 +11,8 @@ No Lean library module lives here; the executable witnesses live under
 | `test/counterexamples/REGISTER.md` | stable counterexample IDs, attacked statements, witnesses, and forced repairs |
 | `test/counterexamples/<family>/ATTACKS.md` | the attack shapes in prose, per family |
 | `test/fixtures/trust-gate/` | the planted declarations the trust self-test appends, and `known-red.txt` |
+| `test/receipts/` | the `(declaration, axiom-set)` receipts each family had in the repository it was extracted from, at the named commit |
+| `test/tools/Receipts.lean` | the generator that writes `generated/receipts-*.tsv` and the join that compares them against `test/receipts/` |
 
 ## Rules
 
@@ -29,3 +31,7 @@ No Lean library module lives here; the executable witnesses live under
   copy of the tree, never into the tree itself. Each one exists to prove that
   the gate rejects it for a *stated* reason; a fixture whose rejection reason
   is not asserted is not evidence.
+- A file under `test/receipts/` is a record of what another repository's
+  kernel reported, at a commit that cannot change. It is never regenerated
+  here, and never edited to make a join pass. A join that fails is a finding
+  about the move.

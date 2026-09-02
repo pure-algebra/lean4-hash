@@ -34,10 +34,12 @@ here.
 
 ## Audit implementation
 
-`HashTest/Audit/AxiomGate.lean` is the one module in this tree admitted to
-the implementation ceiling, by exact name, because `MetaM` reaches
-`Classical.choice`. Another audit module is admitted only by adding its exact
-name to the gate's list, where a stale entry fails the build.
+`HashTest/Audit/AxiomGate.lean` is the repository's trust boundary. Under
+ruling R-11 it enforces one ceiling — `propext`, `Quot.sound`,
+`Classical.choice` — over every audited tree, so it carries no admission list
+and no staleness check. What it still refuses outright is `sorryAx`,
+`Lean.ofReduceBool`, `Lean.ofReduceNat`, `Lean.trustCompiler`, the `_native`
+auxiliary axioms, and any authored `partial` or `unsafe`.
 
 The gate is exhaustive over the compiled environment rather than a
 hand-written theorem list, and it also enforces module closure: a `.lean`

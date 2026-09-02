@@ -68,12 +68,12 @@ To believe the theorems you must trust exactly two things:
 2. **The Lean 4 kernel**, toolchain `v4.33.1`, replayed by the toolchain's
    bundled external checker.
 
-No custom axioms, no `native_decide`, no `bv_decide`, no dependencies. The
-SHA-256 family is closed at `[propext, Quot.sound]`. The SHA3 family arrived
-from foldlab at `[propext, Classical.choice, Quot.sound]`; the exact
-declarations that reach `Classical.choice` are named, with their receipts, in
-`docs/PARITY-DEBT.md`, and retiring that debt is a scheduled step, not an
-open question.
+No custom axioms, no `native_decide`, no `bv_decide`, no `sorry`, no
+dependencies. The package ceiling is `[propext, Quot.sound,
+Classical.choice]`. Within it, the SHA-256 family reaches no
+`Classical.choice` at all, and the SHA3 family reaches it only through
+`String` lemmas; each family's audit line reports its own count, and
+`docs/EXTRACTION-RECORD.md` records both.
 
 ## Checking it yourself
 

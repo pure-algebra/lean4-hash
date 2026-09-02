@@ -11,73 +11,43 @@ This command tokenizes every authored source under `Hash/`, `HashTest/`, and
 definitions, instances, generated declarations, and private helpers. The
 build fails on an authored `unsafe` or `partial` declaration modifier, on any
 declaration that reaches a forbidden axiom, and on any declaration that
-reaches an axiom outside its tree's ceiling.
+reaches an axiom outside the ceiling.
 
-Two ceilings exist:
-
-- the semantic ceiling, `propext` and `Quot.sound`, for `Hash/` and
-  `HashTest/`; and
-- the implementation ceiling, which additionally admits `Classical.choice`,
-  for the `Gates/` tooling tree and for exact-module audit implementation
-  such as this file, because `MetaM` and Lean's `String` traversals reach
-  `Classical.choice` through library proofs.
+**One ceiling** binds every tree here, `Hash/`, `HashTest/` and `Gates/`
+alike, under operator ruling R-11 (2026-09-02): `propext`, `Quot.sound`, and
+`Classical.choice`. `Classical.choice` needs no admission and no exemption,
+so this gate carries no exact-module or exact-declaration admission list and
+no staleness check for one. The two hash families therefore arrive under the
+same ceiling despite reaching different axioms, and ruling HP-2's parity
+question becomes a matter of record rather than a gate: the count of
+choice-reaching declarations per family is stated in
+`docs/EXTRACTION-RECORD.md`.
 
 `sorryAx`, `Lean.ofReduceBool`, `Lean.ofReduceNat`, and `Lean.trustCompiler`
-are forbidden everywhere. The gate is exhaustive over the compiled namespace
-rather than a hand-written theorem list; per-packet axiom reports remain the
-human-readable receipts.
-
-Ruling HP-2 (parity later) means the two hash families arrive under different
-ceilings. `Hash.Sha256.*` is choice-free. `Hash.Sha3.*` was proved in foldlab
-against a ceiling that tolerates `Classical.choice`, and a handful of its
-`String`-typed declarations reach it. Those are admitted here **by exact
-declaration name**, never by a tree-wide exemption, and every admission is
-staleness-checked below: an entry that stops reaching `Classical.choice`
-fails the gate rather than quietly widening the trust boundary.
-`docs/PARITY-DEBT.md` carries the list with its receipts.
+are forbidden everywhere, as are the `_native` auxiliary axioms that
+`native_decide` and `bv_decide` mint. That is what the ceiling actually
+buys: no compiler and no `sorry` in the trust path. The gate is exhaustive
+over the compiled environment rather than a hand-written theorem list;
+per-packet axiom reports remain the human-readable receipts.
 
 This gate is ported from lean4-WHATWG-streams'
 `WhatwgStreamsTest/Audit/AxiomGate.lean` at commit `a1383bc`, with the tree
-names, ceilings, and messages changed for this repository.
+names and messages changed for this repository and the two-ceiling machinery
+removed under R-11.
 -/
 
 open Lean
 
 namespace HashTest.Audit
 
+/-- The one ceiling, under ruling R-11. Every audited tree is bound by it. -/
 private def allowedAxioms : List Name :=
-  [``propext, ``Quot.sound]
-
-private def implementationAxioms : List Name :=
   [``propext, ``Quot.sound, ``Classical.choice]
 
-/-- Exact modules whose declarations are audit implementation. `MetaM`
-reaches `Classical.choice`, so these modules are bound by
-`implementationAxioms`. The list is explicit rather than a namespace prefix
-so that a file dropped into the audit tree cannot silently acquire the wider
-ceiling. Each entry is checked for staleness below.
-
-`Hash.Sha256.Audit` joins this list at S2 and `Hash.Sha3.Audit` at S3, when
-those modules exist; a name listed before its module lands would fail the
-staleness check. -/
-private def auditImplementationModules : List Name :=
-  [ `HashTest.Audit.AxiomGate ]
-
-/-- Exact public declarations admitted to the implementation ceiling outside
-an implementation module. This is where ruling HP-2's parity debt is
-recorded: the `Hash.Sha3.*` declarations whose receipts contain
-`Classical.choice`, each named individually. Empty at S1; populated at S3
-from measured `#print axioms` receipts, and emptied again when step 9 of
-`docs/HASH-PACKAGE-PLAN.md` retires the debt. -/
-private def implementationDeclarations : List Name := []
-
-/-- Private declarations admitted the same way, identified by exact owning
-module and original spelling, never by Lean's private-name counter. -/
-private def implementationPrivateDeclarations : List (Name × Name) := []
-
 /-- The `Gates/` tree is tooling: it is audited for totality and forbidden
-axioms, and admitted to the implementation ceiling as a whole. It contains
-no semantic declaration; `Gates/AGENTS.md` owns that rule. -/
+axioms exactly as the library is. It contains no semantic declaration;
+`Gates/AGENTS.md` owns that rule. The prefix survives R-11 only so the gate
+can report how much of what it checked was tooling. -/
 private def toolingTreePrefix : Name := `Gates
 
 private def forbiddenAxioms : List Name :=
@@ -93,22 +63,8 @@ private def moduleOf? (environment : Environment) (declaration : Name) : Option 
   let index ← environment.getModuleIdxFor? declaration
   environment.header.moduleNames[index.toNat]?
 
-private def resolveImplementationDeclarations
-    (environment : Environment) (declarations : Array Name) : Except String (List Name) := do
-  let mut resolved := implementationDeclarations
-  for (owner, originalName) in implementationPrivateDeclarations do
-    let privateCandidates := declarations.toList.filter fun declaration =>
-      moduleOf? environment declaration == some owner &&
-        privateToUserName? declaration == some originalName
-    match privateCandidates with
-    | [declaration] => resolved := resolved ++ [declaration]
-    | _ => throw s!"Hash axiom gate: private implementation exemption {owner}/{originalName} matched {privateCandidates.length} declarations; expected exactly one"
-  return resolved
-
 /-- The two semantic trees. `Hash/` is the library and `HashTest/` its
-witnesses; both are bound by the semantic ceiling, and only the modules named
-in `auditImplementationModules` and the declarations named in
-`implementationDeclarations` may reach `Classical.choice`. -/
+witnesses. -/
 private def semanticTreePrefixes : List Name :=
   [`Hash, `HashTest]
 
@@ -248,23 +204,14 @@ elab "#hash_axiom_gate" : command => do
             throwError "Hash trust gate: declaration {name} is partial"
         declarations := declarations.push name
 
-  let exactImplementationDeclarations ←
-    match resolveImplementationDeclarations environment declarations with
-    | .ok resolved => pure resolved
-    | .error message => throwError "{message}"
-
   let mut toolingCount : Nat := 0
+  let mut choiceCount : Nat := 0
   for declaration in declarations do
     let axioms ← collectAxioms declaration
-    let moduleName := moduleOf? environment declaration
-    let inTooling := moduleName.any toolingTreePrefix.isPrefixOf
-    if inTooling then toolingCount := toolingCount + 1
-    let bound :=
-      if inTooling || moduleName.any auditImplementationModules.contains ||
-          exactImplementationDeclarations.contains declaration then
-        implementationAxioms
-      else
-        allowedAxioms
+    if (moduleOf? environment declaration).any toolingTreePrefix.isPrefixOf then
+      toolingCount := toolingCount + 1
+    if axioms.contains ``Classical.choice then
+      choiceCount := choiceCount + 1
     for axiomName in axioms do
       if isNativeAuxiliaryAxiom axiomName then
         throwError
@@ -272,32 +219,11 @@ elab "#hash_axiom_gate" : command => do
       if forbiddenAxioms.contains axiomName then
         throwError
           "Hash axiom gate: declaration {declaration} reaches forbidden axiom {axiomName}"
-      if !bound.contains axiomName then
+      if !allowedAxioms.contains axiomName then
         throwError
-          "Hash axiom gate: declaration {declaration} reaches unexpected axiom {axiomName}; allowed axioms are {bound}"
-
-  -- An exemption must not outlive its reason. A named implementation module
-  -- that no longer reaches `Classical.choice` widens the trust boundary for
-  -- nothing, so it fails the gate.
-  for exempted in auditImplementationModules do
-    let mut used := false
-    for declaration in declarations do
-      if moduleOf? environment declaration == some exempted then
-        if (← collectAxioms declaration).contains ``Classical.choice then
-          used := true
-    if !used then
-      throwError
-        "Hash axiom gate: stale implementation exemption for {exempted}; no declaration in it reaches Classical.choice, so remove it from auditImplementationModules"
-
-  for exempted in exactImplementationDeclarations do
-    if !(declarations.contains exempted) then
-      throwError
-        "Hash axiom gate: exact implementation exemption names missing declaration {exempted}"
-    if !(← collectAxioms exempted).contains ``Classical.choice then
-      throwError
-        "Hash axiom gate: stale exact implementation exemption for {exempted}; it no longer reaches Classical.choice"
+          "Hash axiom gate: declaration {declaration} reaches unexpected axiom {axiomName}; allowed axioms are {allowedAxioms}"
 
   logInfo
-    m!"Hash module and axiom gate: checked {sources.size} modules and {declarations.size} declarations ({toolingCount} in the Gates tooling tree); semantic/test ceiling is {allowedAxioms}; implementation ceiling ({auditImplementationModules.length} audit module(s), {exactImplementationDeclarations.length} exact declaration(s), plus the Gates tree) additionally allows Classical.choice"
+    m!"Hash module and axiom gate: checked {sources.size} modules and {declarations.size} declarations ({toolingCount} in the Gates tooling tree); ceiling is {allowedAxioms} for every tree; {choiceCount} declaration(s) reach Classical.choice; 0 offenders"
 
 end HashTest.Audit

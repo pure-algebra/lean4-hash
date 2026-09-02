@@ -1,6 +1,0 @@
-namespace Hash
-
-noncomputable def plantedUnadmittedChoice : Nat :=
-  Classical.choice (inferInstance : Nonempty Nat)
-
-end Hash

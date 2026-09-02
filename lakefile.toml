@@ -5,7 +5,7 @@ keywords = ["sha-256", "sha-224", "sha3-512", "keccak", "fips-180-4", "fips-202"
 license = "Apache-2.0"
 readmeFile = "README.md"
 defaultTargets = ["Hash", "HashVerified", "HashTest", "Gates",
-                  "citations", "trustselftest"]
+                  "sha256", "vendorseal", "citations", "trustselftest"]
 # `lake test` builds the audited root: the `#guard_msgs` pins on the two
 # per-family axiom audit lines are the test.
 testDriver = "HashVerified"
@@ -49,6 +49,14 @@ globs = ["Gates.*"]
 # collisions between executables only, never between an executable and a
 # library. Every entry point here therefore uses `root = "bin.<Name>"` under
 # the default source directory, which resolves to the same `bin/<Name>.lean`.
+[[lean_exe]]
+name = "sha256"
+root = "bin.Sha256"
+
+[[lean_exe]]
+name = "vendorseal"
+root = "bin.VendorSeal"
+
 [[lean_exe]]
 name = "citations"
 root = "bin.Citations"

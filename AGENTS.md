@@ -12,8 +12,7 @@ dependencies and sits below every consumer.
 | Path | Owns |
 | --- | --- |
 | `docs/AGENT-ROUTING.md` | the router hierarchy and the assurance threshold |
-| `docs/EXTRACTION-RECORD.md` | where every file came from, and every deviation from the extraction plan |
-| `docs/PARITY-DEBT.md` | the exact declarations HP-2 leaves outside the semantic ceiling, with their receipts |
+| `docs/EXTRACTION-RECORD.md` | where every file came from, the receipt joins, the per-family axiom counts, and every deviation from the extraction plan |
 | `docs/PROVENANCE.md` | every pin: digest, fetch command, cross-check, license |
 | `docs/SHA256-DAG.md` | the proof graph for SHA-256 and SHA-224 |
 | `docs/sha3/` | the FIPS 202 contract chain, model invariants, provenance, and tooling notes |
@@ -42,25 +41,26 @@ vectors. A known-answer test is finite evidence, never proof. Do not write
 "sound", "equivalent", "conforms", or "complete" without naming the exact
 theorem or gate, its assumptions, and what remains open.
 
-## Ceilings
+## The ceiling
 
-Two ceilings exist, and ruling HP-2 (parity later) is why there are two:
-
-- the **semantic ceiling**, `propext` and `Quot.sound`, binds `Hash/` and
-  `HashTest/`;
-- the **implementation ceiling**, which additionally admits
-  `Classical.choice`, binds the `Gates/` tooling tree, the exactly named
-  audit modules, and the exactly named `Hash.Sha3.*` declarations that
-  arrived from foldlab reaching `Classical.choice` through `String` lemmas.
+**One ceiling**, under operator ruling R-11 (2026-09-02): `propext`,
+`Quot.sound`, and `Classical.choice`, the same for `Hash/`, `HashTest/` and
+`Gates/` alike. There is no admission list, no exemption, and no staleness
+check, because nothing needs admitting.
 
 `sorryAx`, `Lean.ofReduceBool`, `Lean.ofReduceNat`, and `Lean.trustCompiler`
-are forbidden everywhere. This forbids `native_decide` and `bv_decide` in
-proofs. `partial` and `unsafe` are forbidden in all four Lean trees.
+are forbidden everywhere, as are the `_native` auxiliary axioms
+`native_decide` and `bv_decide` mint. That is the substance of the ceiling:
+no compiler and no `sorry` in the trust path. `partial` and `unsafe` are
+forbidden in all four Lean trees.
 
-Every admission is by exact name and is staleness-checked: an entry that no
-longer reaches `Classical.choice` fails the build. A tree-wide exemption for
-either hash family is not acceptable. `docs/PARITY-DEBT.md` lists the current
-admissions with the receipt that justifies each.
+The two families do not in fact reach the same axioms, and that difference
+stays visible without being a gate: each family's audit line reports how many
+of its declarations reach `Classical.choice` (SHA-256: none; SHA3: the
+`String`-typed declarations it arrived with), and
+`docs/EXTRACTION-RECORD.md` records both counts. Ruling HP-2 (parity later)
+still governs the `Digest`/`Hex` unification, which is a separate question
+from the ceiling.
 
 ## Standing constraints
 

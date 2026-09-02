@@ -36,15 +36,12 @@ open Gates.Common
 matched as well as full paths.
 
 These are this repository's own mutable rulings and records: the routers, the
-proof graphs that came with the two families, the provenance ledger, the
-parity debt HP-2 leaves open, and the extraction record. Documents that
-arrived as sealed history from another repository and are not edited here are
-not listed. -/
+proof graphs that came with the two families, the provenance ledger, and the
+extraction record. -/
 def protectedDocuments : List String :=
   ["AGENTS.md",
    "docs/AGENT-ROUTING.md",
    "docs/EXTRACTION-RECORD.md",
-   "docs/PARITY-DEBT.md",
    "docs/PROVENANCE.md",
    "docs/SHA256-DAG.md"]
 

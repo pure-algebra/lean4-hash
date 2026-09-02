@@ -29,8 +29,11 @@ two refinements.
   needs to do any of those belongs under `Gates/`.
 - Totality holds: no `partial`, no `unsafe`, no `opaque`, no `implemented_by`,
   no `extern`.
-- The ceiling is the semantic ceiling, `propext` and `Quot.sound`, except for
-  the exactly named declarations listed in `docs/PARITY-DEBT.md`.
+- The ceiling is the package ceiling, `propext`, `Quot.sound`, and
+  `Classical.choice` (ruling R-11). Reaching `Classical.choice` is not a
+  violation, but it is counted: each family's audit line reports how many of
+  its declarations do, and a proof that avoids it is still worth more than
+  one that does not.
 - No `#print axioms` in a library module: it puts one info line per
   declaration into every consumer's build log. Each family's `Audit` module
   emits exactly one typed verdict instead.
@@ -46,10 +49,11 @@ two refinements.
 
 Ruling HP-2 (parity later, `docs/HASH-PACKAGE-PLAN.md`) is in force:
 `Hash.Sha256.Digest` and `Hash.Sha3.Digest` coexist, as do the two `Hex`
-codecs, each under its own tree's ceiling. They are not unified here, and no
-theorem of either family is restated to make them agree. Step 9 of the plan
-owns that unification; until it runs, `docs/PARITY-DEBT.md` states the cost
-in plain terms.
+codecs. They are not unified here, and no theorem of either family is
+restated to make them agree; a conversion between the two `Digest` types is
+explicit at every call site. Step 9 of the plan owns the unification. Note
+that HP-2 is now only about duplication: ruling R-11 removed the ceiling
+difference that used to be the other half of the debt.
 
 ## Changing a statement
 

@@ -2,9 +2,9 @@
 
 This boundary contains the repository's gates implemented in Lean: the two
 hash command lines, the vendor seal, the internal-citation gate, and the
-trust self-test. It has a distinct trust boundary from `Hash/` and
-`HashTest/`: it is tooling that reads files, spawns processes, and produces
-projections, and it is admitted to the implementation ceiling as a whole.
+trust self-test. It is tooling that reads files, spawns processes, and
+produces projections, and it is audited by exactly the same gate and the same
+ceiling as the library.
 
 ## Why the gates are Lean
 
@@ -20,7 +20,7 @@ they decide nothing.
   belongs under `Hash/` behind a contract.
 - Totality holds: no `partial`, no `unsafe`. Loops are bounded by fuel or by
   the structure they traverse.
-- The ceiling is the implementation ceiling: `propext`, `Quot.sound`, and
+- The ceiling is the package ceiling: `propext`, `Quot.sound`, and
   `Classical.choice`. `sorryAx`, `Lean.ofReduceBool`, `Lean.ofReduceNat`,
   and `Lean.trustCompiler` remain forbidden.
 - A gate reports a stable `PASS` or `FAIL` line stating exactly what was
@@ -54,4 +54,4 @@ they decide nothing.
 | `lake exe vendorseal` | `vendor/` against `generated/vendor-manifest.tsv` in both directions; Windows path validity | nothing |
 | `lake exe vendorseal --write` | Windows path validity | `generated/vendor-manifest.tsv` |
 | `lake exe citations` | no line-numbered citation into a protected authored document | nothing |
-| `lake exe trustselftest` | the declared red set; then planted `partial`, `unsafe`, `Classical.choice`, `sorry`, `native_decide`, malformed literals, and an unreachable module are each rejected for the stated reason | a throwaway copy outside the tree, removed afterwards |
+| `lake exe trustselftest` | the declared red set; then planted `partial`, `unsafe`, `sorry`, `native_decide`, malformed literals, and an unreachable module are each rejected for the stated reason | a throwaway copy outside the tree, removed afterwards |

@@ -27,9 +27,8 @@ map: stop and repair it rather than choosing one.
 
 1. `AGENTS.md` in full.
 2. The router of the boundary being changed.
-3. `docs/EXTRACTION-RECORD.md` if the question is where a file came from, and
-   `docs/PARITY-DEBT.md` if the question is why a declaration is admitted
-   above the semantic ceiling.
+3. `docs/EXTRACTION-RECORD.md` if the question is where a file came from, or
+   which axioms each family actually reaches.
 4. The family's proof graph: `docs/SHA256-DAG.md` or the FIPS 202 contract
    chain under `docs/sha3/`.
 5. The contract packet and counterexample rows for the slice.
