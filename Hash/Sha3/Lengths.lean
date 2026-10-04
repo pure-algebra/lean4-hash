@@ -1,6 +1,10 @@
-import Hash.Sha3.Impl
+module
+
+public import Hash.Sha3.Impl
 
 /-! Byte-length and padding facts for the frozen reference implementation. -/
+
+@[expose] public section
 
 namespace Hash.Sha3.Impl
 

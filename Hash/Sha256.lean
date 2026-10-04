@@ -1,13 +1,15 @@
-import Hash.Sha256.Spec
-import Hash.Sha256.Impl
-import Hash.Sha256.Lengths
-import Hash.Sha256.Bridge
-import Hash.Sha256.Hex
-import Hash.Sha256.Digest
-import Hash.Sha256.Fast
-import Hash.Sha256.Api
-import Hash.Sha256.Context
-import Hash.Sha256.Sha224
+module
+
+public import Hash.Sha256.Spec
+public import Hash.Sha256.Impl
+public import Hash.Sha256.Lengths
+public import Hash.Sha256.Bridge
+public import Hash.Sha256.Hex
+public import Hash.Sha256.Digest
+public import Hash.Sha256.Fast
+public import Hash.Sha256.Api
+public import Hash.Sha256.Context
+public import Hash.Sha256.Sha224
 
 /-!
 # `Hash.Sha256` — SHA-256 and SHA-224 from FIPS 180-4

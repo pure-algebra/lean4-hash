@@ -1,4 +1,6 @@
-import Hash.Sha256.Lengths
+module
+
+public import Hash.Sha256.Lengths
 
 /-!
 # `Hash.Sha256.Fast` — the native layer
@@ -17,6 +19,8 @@ kernel the picture inverts, which is why the known-answer tests stay on `Impl`.
 Every loop is `Nat.fold`, `Hash.Sha256.Vec.ofFn`, or structural recursion; every
 index carries a proof or goes through `byteAt`. No `Id.run do`, no `xs[i]!`.
 -/
+
+@[expose] public section
 
 namespace Hash.Sha256.Fast
 

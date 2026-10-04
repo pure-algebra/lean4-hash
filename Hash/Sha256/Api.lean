@@ -1,6 +1,10 @@
-import Hash.Sha256.Bridge
-import Hash.Sha256.Digest
-import Hash.Sha256.Fast
+module
+
+public import Hash.Sha256.Bridge
+public import Hash.Sha256.Digest
+public import Hash.Sha256.Fast
+meta import Hash.Sha256.Digest
+meta import Hash.Sha256.Fast
 
 /-!
 # `Hash.Sha256.Api` — the public functions
@@ -13,6 +17,8 @@ theorems below are proved through `Fast.sha256_eq_impl` and then
 `Bridge.sha256_bridge`. Their statements are the ones stage S1.3 landed against
 `Hash.Sha256.Impl`; the S1.4 retarget changed the definition and not one statement.
 -/
+
+@[expose] public section
 
 namespace Hash.Sha256
 

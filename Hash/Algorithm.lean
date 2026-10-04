@@ -1,5 +1,7 @@
-import Hash.Sha256
-import Hash.Sha3
+module
+
+public import Hash.Sha256
+public import Hash.Sha3
 
 /-!
 # `Hash.Algorithm` — the surface over both families
@@ -51,6 +53,8 @@ function, and the three `_spec` theorems below carry the meaning through the
 dispatch: what `digestBytes` computes is the transcription of the standard,
 by the same refinement the family already proved.
 -/
+
+@[expose] public section
 
 namespace Hash
 

@@ -1,9 +1,15 @@
-import Hash.Sha3.Lengths
-import Hash.Sha3.Digest
-import Hash.Sha3.Bridge
-import Hash.Sha3.Fast
+module
+
+public import Hash.Sha3.Lengths
+public import Hash.Sha3.Digest
+public import Hash.Sha3.Bridge
+public import Hash.Sha3.Fast
+meta import Hash.Sha3.Digest
+meta import Hash.Sha3.Fast
 
 /-! Public byte-oriented SHA3-512 API and its meaning in the FIPS 202 transcription. -/
+
+@[expose] public section
 
 namespace Hash.Sha3
 

@@ -1,4 +1,6 @@
-import Hash.Sha3.Spec
+module
+
+public import Hash.Sha3.Spec
 
 /-!
 # T3, T4, T5: structural theorems (REV2 frozen statements)
@@ -6,6 +8,8 @@ import Hash.Sha3.Spec
 Pure structural proofs over the spec layer — no mass kernel reduction anywhere.
 Expected axiom profile: `[propext, Quot.sound]` (or smaller).
 -/
+
+@[expose] public section
 
 set_option maxRecDepth 4096
 

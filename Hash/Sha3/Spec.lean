@@ -1,3 +1,5 @@
+module
+
 /-!
 # FIPS 202 specification layer (bit-addressed)
 
@@ -12,6 +14,8 @@ obligations in the Pass B snapshot).
 Transcription-fidelity trust step (contract C2): fidelity of these definitions to the standard's
 prose is human-checked, evidenced downstream by Impl KATs through the bridge.
 -/
+
+@[expose] public section
 
 namespace Hash.Sha3.Spec
 

@@ -14,11 +14,15 @@ Two families coexist here under ruling HP-2 (parity later), both under the
 one package ceiling of ruling R-11, `[propext, Quot.sound,
 Classical.choice]`:
 
-- `Hash.Sha256.Verified` (S2), whose audit reports `0` of 422 declarations
+- `Hash.Sha256.Verified` (S2), whose audit reports `0` of 420 declarations
   reaching `Classical.choice`;
-- `Hash.Sha3.Verified` (S3), whose audit reports 45 of 571 — its hexadecimal
+- `Hash.Sha3.Verified` (S3), whose audit reports 45 of 576 — its hexadecimal
   codec and its refinement lemmas, both apex theorems included.
   `docs/EXTRACTION-RECORD.md` lists them.
+
+The module-system conversion moved the two declaration counts from 422 and 571;
+each family's verified root names the auxiliary declarations that account for
+the change.
 
 Nothing imported here is reachable from `Hash`, so a consumer of the library
 does not build the known-answer tests or the audits.

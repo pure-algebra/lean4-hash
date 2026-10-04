@@ -1,3 +1,5 @@
+module
+
 /-!
 # Executable layer: lane-level Keccak and byte-level SHA3-512
 
@@ -13,6 +15,8 @@ the pinned CAVP vectors checked below.
 Lane packing follows §3.1.2 + B.1: byte `k` of the rate block lands in lane `k / 8` at bit
 position `8 · (k mod 8)` (LSB-first within bytes, little-endian bytes within lanes).
 -/
+
+@[expose] public section
 
 namespace Hash.Sha3.Impl
 

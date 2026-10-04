@@ -23,6 +23,14 @@ its own audit and `Hash.Sha256.Verified` states nothing, so neither is counted.
 S1.1–S1.4 had pinned 280 across ten; S1.5 added `Hash.Sha256.Context` and S1.6
 `Hash.Sha256.Sha224`.
 
+The conversion of the library modules to Lean's module system moved the count from
+422 to 420 without adding or removing an authored declaration. This audit skips
+private names (`Name.isInternal`). Three auxiliary matchers minted inside proofs or
+a derived `Repr` instance are now private (`Fast.H0_eq.match_1_2`,
+`Fast.H0_224_eq.match_1_1`, `instReprAlgorithm.repr.match_1`), and one exposed
+definition that used to share a matcher now has its own public one
+(`Algorithm.outputBytes.match_1`).
+
 The number of declarations reaching `Classical.choice` is `0`. Ruling R-3
 anticipated that `Hex.encode`, `Hex.decode?`, `Digest.toHex` and
 `Digest.ofHex?` might have to reach it; they did not. `Hash.Sha256.Hex`
@@ -31,6 +39,6 @@ ruling R-11 admits `Classical.choice`, so this `0` is now a recorded property
 of the family rather than a condition of the build.
 -/
 
-/-- info: sha256 axiom audit: 422 declarations across 12 modules; ceiling [propext, Quot.sound, Classical.choice]; 0 reach Classical.choice; 0 offenders -/
+/-- info: sha256 axiom audit: 420 declarations across 12 modules; ceiling [propext, Quot.sound, Classical.choice]; 0 reach Classical.choice; 0 offenders -/
 #guard_msgs in
 #sha256_axiom_audit

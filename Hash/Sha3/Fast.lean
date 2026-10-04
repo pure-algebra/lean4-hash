@@ -1,10 +1,13 @@
-import Hash.Sha3.Impl
-import Hash.Sha3.Bridge
-import Init.Data.ByteArray.Lemmas
-import Init.Data.UInt.Bitwise
-import Init.Data.BitVec.Lemmas
-import Init.Data.Vector.OfFn
-import Init.Data.Nat.Fold
+module
+
+public import Hash.Sha3.Impl
+public import Hash.Sha3.Bridge
+public import Init.Data.ByteArray.Lemmas
+public import Init.Data.UInt.Bitwise
+public import Init.Data.BitVec.Lemmas
+public import Init.Data.Vector.OfFn
+public import Init.Data.Nat.Fold
+import all Init.Data.Nat.Fold
 
 /-!
 # Native SHA3-512
@@ -12,6 +15,8 @@ import Init.Data.Nat.Fold
 The native lane permutation uses the same flat state layout as `Hash.Sha3.Impl`.
 The abstraction lemmas below relate each native operation to that reference.
 -/
+
+@[expose] public section
 
 namespace Hash.Sha3.Fast
 
@@ -33,18 +38,23 @@ def rhov : Vector Nat 25 := #v[
    0,  1, 62, 28, 27, 36, 44,  6, 55, 20,  3, 10, 43,
   25, 39, 41, 45, 15, 21,  8, 18,  2, 61, 56, 14]
 
+set_option backward.privateInPublic true in
 @[inline] private def at5 (a : State) (x y : Nat) : Lane :=
   a[(x % 5) + 5 * (y % 5)]'(by
     have := Nat.mod_lt x (by decide : 0 < 5)
     have := Nat.mod_lt y (by decide : 0 < 5)
     omega)
 
+set_option backward.privateInPublic true in
+set_option backward.privateInPublic.warn false in
 def theta (a : State) : State :=
   let col : Nat → Lane := fun x ↦
     at5 a x 0 ^^^ at5 a x 1 ^^^ at5 a x 2 ^^^ at5 a x 3 ^^^ at5 a x 4
   let d : Nat → Lane := fun x ↦ col ((x + 4) % 5) ^^^ rotl (col ((x + 1) % 5)) 1
   Vector.ofFn (fun i : Fin 25 ↦ a[i] ^^^ d (i.val % 5))
 
+set_option backward.privateInPublic true in
+set_option backward.privateInPublic.warn false in
 def rhoPi (a : State) : State :=
   Vector.ofFn (fun i : Fin 25 ↦
     let X := i.val % 5
@@ -56,6 +66,8 @@ def rhoPi (a : State) : State :=
       have := Nat.mod_lt i.val (by decide : 0 < 5)
       omega)))
 
+set_option backward.privateInPublic true in
+set_option backward.privateInPublic.warn false in
 def chi (a : State) : State :=
   Vector.ofFn (fun i : Fin 25 ↦
     let x := i.val % 5

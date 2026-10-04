@@ -1,4 +1,6 @@
-import Hash.Sha256.Impl
+module
+
+public import Hash.Sha256.Impl
 
 /-!
 # `Hash.Sha256.Lengths` — the length and padding facts of the byte-level reference
@@ -10,6 +12,8 @@ The `Hash.Sha256.Impl` length theorems of `docs/SHA256-DAG.md` §4 A1.S1, kept o
 formula, so `Fast.padBytes_eq` and `Bridge.padBytes_bridge` are data-flow proofs
 over a fixed arithmetic shape rather than rederivations of it.
 -/
+
+@[expose] public section
 
 namespace Hash.Sha256.Impl
 

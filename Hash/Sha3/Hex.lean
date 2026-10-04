@@ -1,7 +1,12 @@
+module
+
 /-! Canonical lowercase hexadecimal encoding and checked decoding. -/
+
+@[expose] public section
 
 namespace Hash.Sha3.Hex
 
+set_option backward.privateInPublic true in
 private def digit : Nat → Char
   | 0 => '0'
   | 1 => '1'
@@ -20,6 +25,7 @@ private def digit : Nat → Char
   | 14 => 'e'
   | _ => 'f'
 
+set_option backward.privateInPublic true in
 private def decodeDigit? : Char → Option Nat
   | '0' => some 0
   | '1' => some 1
@@ -39,10 +45,12 @@ private def decodeDigit? : Char → Option Nat
   | 'f' => some 15
   | _ => none
 
+set_option backward.privateInPublic true in
 private def encodeList : List UInt8 → List Char
   | [] => []
   | b :: bs => digit (b.toNat / 16) :: digit (b.toNat % 16) :: encodeList bs
 
+set_option backward.privateInPublic true in
 private def decodeList? : List Char → Option (List UInt8)
   | [] => some []
   | [_] => none
@@ -51,9 +59,13 @@ private def decodeList? : List Char → Option (List UInt8)
     | some h, some l, some bs => some (UInt8.ofNat (16 * h + l) :: bs)
     | _, _, _ => none
 
+set_option backward.privateInPublic true in
+set_option backward.privateInPublic.warn false in
 /-- Two lowercase hexadecimal characters per byte, in byte order. -/
 def encode (bs : ByteArray) : String := String.ofList (encodeList bs.data.toList)
 
+set_option backward.privateInPublic true in
+set_option backward.privateInPublic.warn false in
 /-- Decode lowercase hexadecimal, rejecting odd lengths and every other character. -/
 def decode? (s : String) : Option ByteArray := (decodeList? s.toList).map List.toByteArray
 

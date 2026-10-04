@@ -1,6 +1,10 @@
-import Hash.Sha3.Hex
+module
+
+public import Hash.Sha3.Hex
 
 /-! Fixed-width digests with canonical hexadecimal conversion. -/
+
+@[expose] public section
 
 namespace Hash.Sha3
 

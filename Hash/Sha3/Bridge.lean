@@ -1,8 +1,10 @@
-import Hash.Sha3.Spec
-import Hash.Sha3.Impl
-import Hash.Sha3.Theorems
-import Hash.Sha3.Roundtrips
-import Hash.Sha3.Structural
+module
+
+public import Hash.Sha3.Spec
+public import Hash.Sha3.Impl
+public import Hash.Sha3.Theorems
+public import Hash.Sha3.Roundtrips
+public import Hash.Sha3.Structural
 
 /-!
 # The bridge: `abs`, the B1 round chain, and the B2 sponge ladder (REV2 frozen statements)
@@ -15,6 +17,8 @@ closing here at `sha3_512_bridge` and `keccak512_prefips_bridge`. The Kats-depen
 Structural proofs only — no mass kernel reduction. Axiom ceiling per theorem:
 `[propext, Classical.choice, Quot.sound]`.
 -/
+
+@[expose] public section
 
 namespace Hash.Sha3.Bridge
 

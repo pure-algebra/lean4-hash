@@ -1,4 +1,6 @@
-import Hash.Sha256.Spec
+module
+
+public import Hash.Sha256.Spec
 
 /-!
 # `Hash.Sha256.Hex` — lowercase hexadecimal
@@ -35,15 +37,22 @@ The cost is real and is stated rather than hidden: no theorem relates
 `decodeChars?_encodeChars` carries the whole round trip one layer down.
 -/
 
+@[expose] public section
+
 namespace Hash.Sha256.Hex
 
+set_option backward.privateInPublic true in
 /-- The sixteen lowercase hexadecimal digits, in value order. -/
 private def digitTable : List Char :=
   ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f']
 
+set_option backward.privateInPublic true in
+set_option backward.privateInPublic.warn false in
 /-- The lowercase hexadecimal digit of a value, read modulo 16. -/
 def digit (n : Nat) : Char := digitTable.getD (n % 16) '0'
 
+set_option backward.privateInPublic true in
+set_option backward.privateInPublic.warn false in
 /-- The value of a lowercase hexadecimal digit. Uppercase is rejected (R-5). -/
 def digitValue? (c : Char) : Option Nat :=
   let i := digitTable.idxOf c
@@ -76,6 +85,7 @@ def encode (bs : ByteArray) : String := String.ofList (encodeChars bs)
 
 /-! ## Decoding -/
 
+set_option backward.privateInPublic true in
 private def decodeAux : List Char → Option (List UInt8)
   | [] => some []
   | [_] => none
@@ -84,15 +94,20 @@ private def decodeAux : List Char → Option (List UInt8)
       | some x, some y, some t => some (UInt8.ofNat (16 * x + y) :: t)
       | _, _, _ => none
 
+set_option backward.privateInPublic true in
+set_option backward.privateInPublic.warn false in
 /-- The proved decoder: `none` on an odd length or on any character that is not
 a lowercase hexadecimal digit. -/
 def decodeChars? (cs : List Char) : Option ByteArray := (decodeAux cs).map List.toByteArray
 
+set_option backward.privateInPublic true in
 /-- The characters of a byte array read as ASCII. Used only to give `decode?` a
 `String` face without `String.toList`, which is outside the axiom ceiling. -/
 private def asciiChars (bs : ByteArray) : List Char :=
   bs.data.toList.map fun b => Char.ofNat b.toNat
 
+set_option backward.privateInPublic true in
+set_option backward.privateInPublic.warn false in
 /-- Lowercase hexadecimal decoding of a string, through its UTF-8 bytes. On the
 lowercase ASCII this module produces, these are the string's own characters. -/
 def decode? (s : String) : Option ByteArray := decodeChars? (asciiChars s.toUTF8)
@@ -119,6 +134,8 @@ theorem length_encodeChars (bs : ByteArray) : (encodeChars bs).length = 2 * bs.s
   rw [encodeChars, length_encodeCharsOfList, Array.length_toList]
   rfl
 
+set_option backward.privateInPublic true in
+set_option backward.privateInPublic.warn false in
 theorem decodeAux_encodeCharsOfList (l : List UInt8) : decodeAux (encodeCharsOfList l) = some l := by
   induction l with
   | nil => rfl

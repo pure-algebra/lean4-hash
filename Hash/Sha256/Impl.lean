@@ -1,4 +1,6 @@
-import Hash.Sha256.Spec
+module
+
+public import Hash.Sha256.Spec
 
 /-!
 # `Hash.Sha256.Impl` — the byte-level reference
@@ -23,6 +25,8 @@ No `Id.run do`, no `for`/`mut`, no `xs[i]!`: every loop is `Nat.fold`,
 `Vec.ofFn`, `List.foldl`, or structural, and every index carries a proof or
 goes through `List.getD` (`docs/SHA256-DAG.md` §3.3).
 -/
+
+@[expose] public section
 
 namespace Hash.Sha256.Impl
 

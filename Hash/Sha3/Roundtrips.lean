@@ -1,4 +1,6 @@
-import Hash.Sha3.Spec
+module
+
+public import Hash.Sha3.Spec
 
 /-!
 # T6a, T6b, R2: conversion round-trip theorems (REV2 frozen statements)
@@ -6,6 +8,8 @@ import Hash.Sha3.Spec
 The precise length-scoped round trips (no unrestricted bijections are claimed anywhere).
 Expected axiom profile: `[propext, Quot.sound]` (or smaller).
 -/
+
+@[expose] public section
 
 set_option maxRecDepth 4096
 

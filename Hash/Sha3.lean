@@ -1,13 +1,15 @@
 -- Root of the `Hash.Sha3` library: the FIPS 202 specification, the executable
 -- implementation, and the theorems relating them.
-import Hash.Sha3.Spec
-import Hash.Sha3.Impl
-import Hash.Sha3.Theorems
-import Hash.Sha3.Structural
-import Hash.Sha3.Roundtrips
-import Hash.Sha3.Bridge
-import Hash.Sha3.Lengths
-import Hash.Sha3.Hex
-import Hash.Sha3.Digest
-import Hash.Sha3.Fast
-import Hash.Sha3.Api
+module
+
+public import Hash.Sha3.Spec
+public import Hash.Sha3.Impl
+public import Hash.Sha3.Theorems
+public import Hash.Sha3.Structural
+public import Hash.Sha3.Roundtrips
+public import Hash.Sha3.Bridge
+public import Hash.Sha3.Lengths
+public import Hash.Sha3.Hex
+public import Hash.Sha3.Digest
+public import Hash.Sha3.Fast
+public import Hash.Sha3.Api

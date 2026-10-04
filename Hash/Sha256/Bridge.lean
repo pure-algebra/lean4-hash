@@ -1,4 +1,9 @@
-import Hash.Sha256.Lengths
+module
+
+public import Hash.Sha256.Lengths
+import all Init.Data.Vector.Basic
+import all Init.Data.Array.DecidableEq
+import all Init.Data.Array.Basic
 
 /-!
 # `Hash.Sha256.Bridge` — the byte-level reference computes the FIPS 180-4 function
@@ -18,6 +23,8 @@ only on padded input, `Spec.bitsOfBytes_bytesOfBits` carries its `% 8` premise,
 and `sha256_bridge` is stated on byte-aligned messages only. No unrestricted
 bijection is claimed.
 -/
+
+@[expose] public section
 
 namespace Hash.Sha256.Bridge
 

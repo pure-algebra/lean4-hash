@@ -1,4 +1,6 @@
-import Hash.Sha256.Api
+module
+
+public import Hash.Sha256.Api
 
 /-!
 # `Hash.Sha256.Context` — incremental SHA-256
@@ -32,6 +34,8 @@ Every loop is `Nat.fold`, `List.ofFn`, or structural recursion; every index
 carries a proof or goes through `Fast.byteAt`. No `Id.run do`, no `xs[i]!`
 (`docs/SHA256-DAG.md` §3.3).
 -/
+
+@[expose] public section
 
 namespace Hash.Sha256
 

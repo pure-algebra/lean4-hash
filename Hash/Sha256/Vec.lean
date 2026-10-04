@@ -1,3 +1,5 @@
+module
+
 /-!
 # `Hash.Sha256.Vec` — a `Vector.ofFn` that stays inside the axiom ceiling
 
@@ -26,6 +28,8 @@ proofs need. Nothing else about `ofFn` is used anywhere in `Hash/Sha256/`.
 This is a finding about `Hash/Sha256/`'s stricter-than-usual ceiling, not a defect in
 core: `Classical.choice` is ordinary in Lean's own library.
 -/
+
+@[expose] public section
 
 namespace Hash.Sha256.Vec
 

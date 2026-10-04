@@ -1,4 +1,6 @@
-import Hash.Sha256.Hex
+module
+
+public import Hash.Sha256.Hex
 
 /-!
 # `Hash.Sha256.Digest` — a byte string whose length is carried by its type
@@ -13,6 +15,8 @@ A theorem mentioning `String.length` or `String.toList` inherits
 `docs/SHA256-DAG.md` §3.1 forbids for this tree; §4 A1.S3's measured note
 directs the `List Char` restatement.
 -/
+
+@[expose] public section
 
 namespace Hash.Sha256
 

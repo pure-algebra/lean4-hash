@@ -1,5 +1,7 @@
-import Hash.Sha3.Spec
-import Hash.Sha3.Impl
+module
+
+public import Hash.Sha3.Spec
+public import Hash.Sha3.Impl
 
 /-!
 # T1–T2: table-versus-generator theorems (Pass B frozen statements)
@@ -7,6 +9,8 @@ import Hash.Sha3.Impl
 Both are finite decidable claims: the Impl tables (round constants, ρ offsets) equal the
 Spec generators (the §3.2.5 LFSR, the §3.2.2 walk). Expected axioms: `[propext, Quot.sound]`.
 -/
+
+@[expose] public section
 
 set_option maxRecDepth 8000000
 set_option maxHeartbeats 8000000

@@ -1,4 +1,9 @@
-import Hash.Sha256.Api
+module
+
+public import Hash.Sha256.Api
+meta import Hash.Sha256.Digest
+meta import Hash.Sha256.Fast
+import all Init.Data.Nat.Fold
 
 /-!
 # `Hash.Sha256.Sha224` — SHA-224 from FIPS 180-4 §6.3
@@ -30,6 +35,8 @@ object of the prior-art clone and sealed. The `Impl`-level guards are in
 `Hash.Sha256.Kats`; this file ends with the same five witnesses restated on the
 public API.
 -/
+
+@[expose] public section
 
 namespace Hash.Sha256
 

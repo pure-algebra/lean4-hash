@@ -1,6 +1,8 @@
-import Hash.Sha256
-import Hash.Sha3
-import Hash.Algorithm
+module
+
+public import Hash.Sha256
+public import Hash.Sha3
+public import Hash.Algorithm
 
 /-!
 # `Hash` — proved hash functions in Lean 4

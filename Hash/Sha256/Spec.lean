@@ -1,4 +1,6 @@
-import Hash.Sha256.Vec
+module
+
+public import Hash.Sha256.Vec
 
 /-!
 # `Hash.Sha256.Spec` — the FIPS 180-4 transcription
@@ -31,6 +33,8 @@ The `natOfBits`/`bitsOfNat` round-trip technique reproduces, for the MSB-first
 convention, the `Classical.choice`-free route the operator supplied for
 foldlab's `formal/fips202` stage S0.2. It is reproduced, not imported.
 -/
+
+@[expose] public section
 
 namespace Hash.Sha256.Spec
 
