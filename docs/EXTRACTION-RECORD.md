@@ -146,8 +146,8 @@ here as information rather than enforced:
 
 | Family | Declarations audited | Reaching `Classical.choice` |
 | --- | --- | --- |
-| `Hash.Sha256` | 422 across 12 modules | **0** |
-| `Hash.Sha3` | 571 across 14 modules | **45** |
+| `Hash.Sha256` | 420 across 12 modules | **0** |
+| `Hash.Sha3` | 576 across 14 modules | **45** |
 
 The SHA-256 figure is the one its source repository's stricter ceiling used
 to enforce; it survived the move unchanged.
@@ -181,11 +181,13 @@ the SHA-3 family keeps `Classical.choice` permanently — which ruling R-11 has
 in effect already made survivable.
 
 Both audit lines are pinned by `#guard_msgs`, so either number moving is a
-build error:
+build error. The module-system conversion moved them from 422 and 571: every
+difference is an auxiliary declaration made private or minted anew, and the
+choice counts did not move:
 
 ```text
-sha256 axiom audit: 422 declarations across 12 modules; ceiling [propext, Quot.sound, Classical.choice]; 0 reach Classical.choice; 0 offenders
-sha3 axiom audit: 571 declarations across 14 modules; ceiling [propext, Quot.sound, Classical.choice]; 45 reach Classical.choice; 0 offenders
+sha256 axiom audit: 420 declarations across 12 modules; ceiling [propext, Quot.sound, Classical.choice]; 0 reach Classical.choice; 0 offenders
+sha3 axiom audit: 576 declarations across 14 modules; ceiling [propext, Quot.sound, Classical.choice]; 45 reach Classical.choice; 0 offenders
 ```
 
 The repository-wide gate, which audits every declaration in `Hash/`,

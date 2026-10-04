@@ -85,7 +85,7 @@ actually uses.
 The two families differ here, and the difference is worth stating plainly.
 The SHA-256 family reaches no `Classical.choice` at all: its bridge to
 FIPS 180-4 and its native-layer refinement are closed at
-`[propext, Quot.sound]`. The SHA3-512 family reaches it in 45 of its 571
+`[propext, Quot.sound]`. The SHA3-512 family reaches it in 45 of its 576
 audited declarations — its hexadecimal codec, and also its sponge and
 permutation refinement lemmas, including both apex theorems.
 `docs/EXTRACTION-RECORD.md` lists them by group.
